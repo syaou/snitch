@@ -7,7 +7,7 @@ enum SampleData {
     static let posts: [ProofPost] = [
         ProofPost(
             userName: "Alex Johnson",
-            goalTitle: "Morning Run · 5.2 km",
+            goalTitle: "Morning Run 5K",
             imageName: "figure.run",
             status: "Pending",
             time: "2h ago",

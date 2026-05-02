@@ -116,7 +116,3 @@ struct UploadProofView: View {
         }
     }
 }
-
-#Preview {
-    UploadProofView()
-}

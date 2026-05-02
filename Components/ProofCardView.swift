@@ -83,6 +83,7 @@ struct ProofCardView: View {
                     Image(systemName: isLiked ? "heart.fill" : "heart")
                         .foregroundStyle(isLiked ? .red : .gray)
                 }
+                .buttonStyle(.plain)
 
                 Button {
                     withAnimation {
@@ -91,6 +92,14 @@ struct ProofCardView: View {
                 } label: {
                     Image(systemName: "bubble.right")
                 }
+                .buttonStyle(.plain)
+
+                Spacer()
+
+                Text("Open detail")
+                    .font(.caption)
+                    .fontWeight(.medium)
+                    .foregroundStyle(.secondary)
             }
 
             // COMMENTS SECTION

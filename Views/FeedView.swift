@@ -5,6 +5,7 @@ struct FeedView: View {
     @State private var selectedFilter = "All"
 
     private let filters = ["All", "Pending", "Approved"]
+    private let pendingFriendRequests = 2
 
     private var filteredPosts: [ProofPost] {
         if selectedFilter == "All" {
@@ -32,13 +33,40 @@ struct FeedView: View {
 
                         Spacer()
 
-                        Circle()
-                            .fill(Color.blue.opacity(0.15))
-                            .frame(width: 46, height: 46)
-                            .overlay {
-                                Image(systemName: "bell")
-                                    .foregroundStyle(.blue)
+                        HStack(spacing: 10) {
+                            NavigationLink {
+                                FriendsView()
+                            } label: {
+                                Circle()
+                                    .fill(Color.green.opacity(0.15))
+                                    .frame(width: 46, height: 46)
+                                    .overlay {
+                                        Image(systemName: "person.2")
+                                            .foregroundStyle(.green)
+                                    }
+                                    .overlay(alignment: .topTrailing) {
+                                        if pendingFriendRequests > 0 {
+                                            Text("\(pendingFriendRequests)")
+                                                .font(.caption2)
+                                                .fontWeight(.bold)
+                                                .foregroundStyle(.white)
+                                                .frame(width: 18, height: 18)
+                                                .background(Color.red)
+                                                .clipShape(Circle())
+                                                .offset(x: 2, y: -2)
+                                        }
+                                    }
                             }
+                            .buttonStyle(.plain)
+
+                            Circle()
+                                .fill(Color.blue.opacity(0.15))
+                                .frame(width: 46, height: 46)
+                                .overlay {
+                                    Image(systemName: "bell")
+                                        .foregroundStyle(.blue)
+                                }
+                        }
                     }
 
                     HStack(spacing: 10) {
@@ -64,7 +92,12 @@ struct FeedView: View {
                         .padding(.top, 8)
 
                     ForEach(filteredPosts) { post in
-                        ProofCardView(post: post)
+                        NavigationLink {
+                            ProofDetailView(post: post)
+                        } label: {
+                            ProofCardView(post: post)
+                        }
+                        .buttonStyle(.plain)
                     }
                 }
                 .padding(.horizontal, 20)
@@ -84,8 +117,4 @@ struct FeedView: View {
 
         return filter
     }
-}
-
-#Preview {
-    FeedView()
 }
