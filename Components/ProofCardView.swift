@@ -47,13 +47,13 @@ struct ProofCardView: View {
 
                 Spacer()
 
-                Text(post.time)
+                Text(post.timeAgo)
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
 
             // ACTION BUTTONS (Approve/Reject)
-            if post.status == "Pending" {
+            if post.status(votersCount: SampleData.votersCount) == .pending {
                 HStack(spacing: 10) {
                     Text("Approve")
                         .font(.caption)
@@ -138,14 +138,18 @@ struct ProofCardView: View {
         return parts.compactMap { $0.first }.prefix(2).map { String($0) }.joined()
     }
 
+    private var currentStatus: ProofStatus {
+        post.status(votersCount: SampleData.votersCount)
+    }
+
     private var backgroundColor: Color {
-        post.status == "Approved"
+        currentStatus == .approved
         ? Color.green.opacity(0.15)
         : Color.blue.opacity(0.15)
     }
 
     private var statusBadge: some View {
-        Text(post.status == "Approved" ? "Approved" : "Pending review")
+        Text(currentStatus == .approved ? "Approved" : "Pending review")
             .font(.caption)
             .padding(.horizontal, 10)
             .padding(.vertical, 6)

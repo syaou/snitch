@@ -1,8 +1,10 @@
 import Foundation
 
-struct Goal: Identifiable {
-    let id = UUID()
+struct Goal: Identifiable, Codable {
+    var id: UUID = UUID()
     let title: String
     let description: String
-    let target: String
+    var status: GoalStatus
+    let groupId: UUID?
+    let createdAt: Date
 }

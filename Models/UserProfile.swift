@@ -1,9 +1,10 @@
 import Foundation
 
-struct UserProfile: Identifiable {
-    let id = UUID()
+struct UserProfile: Identifiable, Codable {
+    var id: UUID = UUID()
     let name: String
     let bio: String
-    let goalCount: Int
-    let points: Int
+    var goalCount: Int
+    var points: Int
+    var credibility: Int = 100
 }

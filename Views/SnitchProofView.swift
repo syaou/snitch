@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct FlagProofView: View {
+struct SnitchProofView: View {
     let post: ProofPost
 
     @State private var selectedReason = "Effort doesn't match the claim"
@@ -28,7 +28,7 @@ struct FlagProofView: View {
             .padding(.vertical, 16)
         }
         .background(Color(.systemGroupedBackground))
-        .navigationTitle("Flag proof")
+        .navigationTitle("Snitch on this")
         .navigationBarTitleDisplayMode(.inline)
     }
 
@@ -39,10 +39,10 @@ struct FlagProofView: View {
                 .foregroundStyle(Color.orange.opacity(0.95))
 
             VStack(alignment: .leading, spacing: 4) {
-                Text("Flagging \(post.userName)'s proof")
+                Text("Snitching on \(post.userName)'s proof")
                     .font(.headline)
 
-                Text("\(post.goalTitle) · submitted \(post.time)")
+                Text("\(post.goalTitle) · submitted \(post.timeAgo)")
                     .font(.subheadline)
                     .foregroundStyle(Color.orange.opacity(0.95))
             }
@@ -100,7 +100,7 @@ struct FlagProofView: View {
             Image(systemName: "exclamationmark.circle")
                 .foregroundStyle(.red)
 
-            Text("False flags affect your reviewer trust score. Flag only if you genuinely believe this proof is invalid.")
+            Text("False snitches lose you credibility. Only snitch if you genuinely believe this proof is invalid.")
                 .font(.subheadline)
                 .foregroundStyle(.red.opacity(0.95))
         }
@@ -112,7 +112,7 @@ struct FlagProofView: View {
     private var submitButton: some View {
         Button {
         } label: {
-            Text("Submit flag")
+            Text("Submit snitch")
                 .font(.headline)
                 .foregroundStyle(.white)
                 .frame(maxWidth: .infinity)
@@ -124,7 +124,7 @@ struct FlagProofView: View {
     }
 
     private var footerNote: some View {
-        Text("Group vote required to reject · 2 of 4 members must agree")
+        Text("Group vote decides · 2 of 3 voters must agree")
             .font(.footnote)
             .foregroundStyle(.secondary)
             .frame(maxWidth: .infinity, alignment: .center)
