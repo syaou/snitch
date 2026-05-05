@@ -28,7 +28,7 @@ struct SnitchProofView: View {
             .padding(.vertical, 16)
         }
         .background(Color(.systemGroupedBackground))
-        .navigationTitle("Snitch on this")
+        .navigationTitle("About to snitch?")
         .navigationBarTitleDisplayMode(.inline)
     }
 
@@ -100,7 +100,7 @@ struct SnitchProofView: View {
             Image(systemName: "exclamationmark.circle")
                 .foregroundStyle(.red)
 
-            Text("False snitches lose you credibility. Only snitch if you genuinely believe this proof is invalid.")
+            Text("You sure you want to snitch? If you're wrong, you'll lose trust.")
                 .font(.subheadline)
                 .foregroundStyle(.red.opacity(0.95))
         }
@@ -112,7 +112,7 @@ struct SnitchProofView: View {
     private var submitButton: some View {
         Button {
         } label: {
-            Text("Submit snitch")
+            Text("SNITCH!")
                 .font(.headline)
                 .foregroundStyle(.white)
                 .frame(maxWidth: .infinity)

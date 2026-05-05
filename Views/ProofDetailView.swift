@@ -183,7 +183,7 @@ struct ProofDetailView: View {
             NavigationLink {
                 SnitchProofView(post: post)
             } label: {
-                Text("Reject")
+                Text("Snitch")
                     .font(.headline)
                     .foregroundStyle(.red)
                     .frame(maxWidth: .infinity)
