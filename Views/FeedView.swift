@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct FeedView: View {
-    @StateObject private var viewModel = FeedViewModel()
+    @EnvironmentObject var viewModel: FeedViewModel
     @State private var selectedFilter = "All"
 
     private let filters = ["All", "Pending", "Approved"]
