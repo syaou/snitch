@@ -67,14 +67,14 @@ struct ProofDetailView: View {
                     .font(.title3)
                     .fontWeight(.semibold)
 
-                Text("\(post.goalTitle) · \(post.time)")
+                Text("\(post.goalTitle) · \(post.timeAgo)")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
 
             Spacer()
 
-            Text(post.status)
+            Text(post.status(votersCount: SampleData.votersCount).displayName)
                 .font(.subheadline)
                 .fontWeight(.semibold)
                 .foregroundStyle(.green)
@@ -181,7 +181,7 @@ struct ProofDetailView: View {
             .buttonStyle(.plain)
 
             NavigationLink {
-                FlagProofView(post: post)
+                SnitchProofView(post: post)
             } label: {
                 Text("Reject")
                     .font(.headline)

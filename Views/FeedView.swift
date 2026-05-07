@@ -8,10 +8,9 @@ struct FeedView: View {
     private let pendingFriendRequests = 2
 
     private var filteredPosts: [ProofPost] {
-        if selectedFilter == "All" {
-            return viewModel.posts
-        } else {
-            return viewModel.posts.filter { $0.status == selectedFilter }
+        guard selectedFilter != "All" else { return viewModel.posts }
+        return viewModel.posts.filter {
+            $0.status(votersCount: SampleData.votersCount).displayName == selectedFilter
         }
     }
 
@@ -111,7 +110,9 @@ struct FeedView: View {
 
     private func filterTitle(_ filter: String) -> String {
         if filter == "Pending" {
-            let count = viewModel.posts.filter { $0.status == "Pending" }.count
+            let count = viewModel.posts.filter {
+                $0.status(votersCount: SampleData.votersCount) == .pending
+            }.count
             return "Pending (\(count))"
         }
 
