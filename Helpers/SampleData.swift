@@ -5,9 +5,9 @@ enum SampleData {
     // MARK: - USERS
 
     static let sana  = UserProfile(name: "Sana Yousefi", bio: "Building better habits one step at a time.", goalCount: 4, points: 120)
-    static let alex  = UserProfile(name: "Alex Johnson", bio: "Runner, lifter, snitch master.",             goalCount: 3, points: 95,  credibility: 92)
+    static let alex  = UserProfile(name: "Alex Johnson", bio: "Runner, lifter, snitch master.",             goalCount: 3, points: 95,  trust: 92)
     static let sarah = UserProfile(name: "Sarah Chen",   bio: "Reading more, scrolling less.",              goalCount: 4, points: 88)
-    static let mike  = UserProfile(name: "Mike Brown",   bio: "Chest day every day.",                       goalCount: 2, points: 72,  credibility: 78)
+    static let mike  = UserProfile(name: "Mike Brown",   bio: "Chest day every day.",                       goalCount: 2, points: 72,  trust: 78)
 
     static let users: [UserProfile] = [sana, alex, sarah, mike]
     static let profile = sana

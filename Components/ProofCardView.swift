@@ -52,7 +52,7 @@ struct ProofCardView: View {
                     .foregroundStyle(.secondary)
             }
 
-            // ACTION BUTTONS (Approve/Reject)
+            // ACTION BUTTONS (Approve/Snitch)
             if post.status(votersCount: SampleData.votersCount) == .pending {
                 HStack(spacing: 10) {
                     Text("Approve")
@@ -62,7 +62,7 @@ struct ProofCardView: View {
                         .background(Color.green.opacity(0.15))
                         .clipShape(Capsule())
 
-                    Text("Reject")
+                    Text("Snitch")
                         .font(.caption)
                         .padding(.horizontal, 12)
                         .padding(.vertical, 6)
