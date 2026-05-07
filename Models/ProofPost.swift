@@ -1,6 +1,6 @@
 import Foundation
 
-struct ProofPost: Identifiable, Codable {
+struct ProofPost: Identifiable, Codable, Hashable {
     var id: UUID = UUID()
     let userId: UUID
     let userName: String

@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct ProofDetailView: View {
+    @EnvironmentObject var feedViewModel: FeedViewModel
+
     let post: ProofPost
 
     var body: some View {
@@ -179,6 +181,7 @@ struct ProofDetailView: View {
     private var actionSection: some View {
         HStack(spacing: 12) {
             Button {
+                feedViewModel.castVote(.approve, by: SampleData.profile.id, on: post.id)
             } label: {
                 Text("Approve")
                     .font(.headline)
