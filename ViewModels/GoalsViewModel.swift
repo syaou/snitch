@@ -3,7 +3,19 @@ import Combine
 
 @MainActor
 final class GoalsViewModel: ObservableObject {
-    @Published private(set) var goals: [Goal] = SampleData.goals
+    @Published private(set) var goals: [Goal] {
+        didSet {
+            Persistence.save(goals, forKey: PersistenceKeys.goals)
+        }
+    }
+
+    init() {
+        if let saved = Persistence.load([Goal].self, forKey: PersistenceKeys.goals) {
+            self.goals = saved
+        } else {
+            self.goals = SampleData.goals
+        }
+    }
 
     func add(_ goal: Goal) {
         goals.append(goal)

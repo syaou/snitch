@@ -17,9 +17,23 @@ struct ProofCardView: View {
 
             // TOP IMAGE
             ZStack(alignment: .topTrailing) {
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(backgroundColor)
-                    .frame(height: 160)
+                if let data = post.photoData, let uiImage = UIImage(data: data) {
+                    Image(uiImage: uiImage)
+                        .resizable()
+                        .scaledToFill()
+                        .frame(height: 160)
+                        .frame(maxWidth: .infinity)
+                        .clipShape(RoundedRectangle(cornerRadius: 16))
+                } else {
+                    RoundedRectangle(cornerRadius: 16)
+                        .fill(backgroundColor)
+                        .frame(height: 160)
+                        .overlay {
+                            Image(systemName: post.iconName)
+                                .font(.system(size: 38))
+                                .foregroundStyle(.gray.opacity(0.5))
+                        }
+                }
 
                 statusBadge
                     .padding(10)

@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct GoalsView: View {
-    @StateObject private var viewModel = GoalsViewModel()
+    @EnvironmentObject var viewModel: GoalsViewModel
     @State private var showingCreateGoal = false
 
     var body: some View {
