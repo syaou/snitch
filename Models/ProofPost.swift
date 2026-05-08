@@ -1,6 +1,6 @@
 import Foundation
 
-struct ProofPost: Identifiable, Codable {
+struct ProofPost: Identifiable, Codable, Hashable {
     var id: UUID = UUID()
     let userId: UUID
     let userName: String
@@ -9,6 +9,7 @@ struct ProofPost: Identifiable, Codable {
     let groupId: UUID?
     let iconName: String
     let createdAt: Date
+    var photoData: Data? = nil
     var votes: [ProofVote] = []
     var comments: [Comment] = []
     var isLiked: Bool = false

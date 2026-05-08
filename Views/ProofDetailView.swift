@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct ProofDetailView: View {
+    @EnvironmentObject var feedViewModel: FeedViewModel
+
     let post: ProofPost
 
     var body: some View {
@@ -22,13 +24,23 @@ struct ProofDetailView: View {
 
     private var proofImageCard: some View {
         ZStack {
-            RoundedRectangle(cornerRadius: 22)
-                .fill(Color.blue.opacity(0.12))
-                .frame(height: 220)
-
-            Image(systemName: "clock")
-                .font(.system(size: 52))
-                .foregroundStyle(Color.blue.opacity(0.65))
+            if let data = post.photoData, let uiImage = UIImage(data: data) {
+                Image(uiImage: uiImage)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(height: 220)
+                    .frame(maxWidth: .infinity)
+                    .clipShape(RoundedRectangle(cornerRadius: 22))
+            } else {
+                RoundedRectangle(cornerRadius: 22)
+                    .fill(Color.blue.opacity(0.12))
+                    .frame(height: 220)
+                    .overlay {
+                        Image(systemName: post.iconName)
+                            .font(.system(size: 52))
+                            .foregroundStyle(Color.blue.opacity(0.65))
+                    }
+            }
 
             VStack {
                 Spacer()
@@ -169,6 +181,7 @@ struct ProofDetailView: View {
     private var actionSection: some View {
         HStack(spacing: 12) {
             Button {
+                feedViewModel.castVote(.approve, by: SampleData.profile.id, on: post.id)
             } label: {
                 Text("Approve")
                     .font(.headline)
@@ -183,7 +196,7 @@ struct ProofDetailView: View {
             NavigationLink {
                 SnitchProofView(post: post)
             } label: {
-                Text("Reject")
+                Text("Snitch")
                     .font(.headline)
                     .foregroundStyle(.red)
                     .frame(maxWidth: .infinity)

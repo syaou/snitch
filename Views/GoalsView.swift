@@ -1,7 +1,8 @@
 import SwiftUI
 
 struct GoalsView: View {
-    @StateObject private var viewModel = GoalsViewModel()
+    @EnvironmentObject var viewModel: GoalsViewModel
+    @State private var showingCreateGoal = false
 
     var body: some View {
         NavigationStack {
@@ -13,10 +14,17 @@ struct GoalsView: View {
 
                     ForEach(viewModel.goals) { goal in
                         GoalCardView(goal: goal)
+                            .contextMenu {
+                                Button(role: .destructive) {
+                                    viewModel.delete(id: goal.id)
+                                } label: {
+                                    Label("Delete", systemImage: "trash")
+                                }
+                            }
                     }
 
                     Button {
-                        
+                        showingCreateGoal = true
                     } label: {
                         HStack {
                             Image(systemName: "plus")
@@ -42,6 +50,9 @@ struct GoalsView: View {
             }
             .background(Color(.systemGray6))
             .navigationBarTitleDisplayMode(.inline)
+            .sheet(isPresented: $showingCreateGoal) {
+                CreateGoalView(viewModel: viewModel)
+            }
         }
     }
 }

@@ -1,16 +1,18 @@
 import SwiftUI
 
 struct SnitchProofView: View {
+    @EnvironmentObject var feedViewModel: FeedViewModel
+    @Environment(\.dismiss) private var dismiss
+
     let post: ProofPost
 
     @State private var selectedReason = "Effort doesn't match the claim"
     @State private var note = ""
 
     private let reasons = [
-        ("Photo looks old or recycled", "Photo may have been taken on a different day"),
+        ("Reused photo", "Looks taken another day, recycled, or duplicated"),
         ("Wrong activity shown", "Photo doesn't match the claimed goal"),
         ("Effort doesn't match the claim", "e.g. barely counts as a 5K run"),
-        ("I've seen this photo before", "Possible duplicate submission"),
         ("Other", "Explain below")
     ]
 
@@ -28,7 +30,7 @@ struct SnitchProofView: View {
             .padding(.vertical, 16)
         }
         .background(Color(.systemGroupedBackground))
-        .navigationTitle("Snitch on this")
+        .navigationTitle("About to snitch?")
         .navigationBarTitleDisplayMode(.inline)
     }
 
@@ -100,7 +102,7 @@ struct SnitchProofView: View {
             Image(systemName: "exclamationmark.circle")
                 .foregroundStyle(.red)
 
-            Text("False snitches lose you credibility. Only snitch if you genuinely believe this proof is invalid.")
+            Text("You sure you want to snitch? If you're wrong, you'll lose trust.")
                 .font(.subheadline)
                 .foregroundStyle(.red.opacity(0.95))
         }
@@ -111,8 +113,10 @@ struct SnitchProofView: View {
 
     private var submitButton: some View {
         Button {
+            feedViewModel.castVote(.snitch, by: SampleData.profile.id, on: post.id)
+            dismiss()
         } label: {
-            Text("Submit snitch")
+            Text("SNITCH!")
                 .font(.headline)
                 .foregroundStyle(.white)
                 .frame(maxWidth: .infinity)

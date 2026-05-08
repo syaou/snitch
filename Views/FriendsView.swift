@@ -25,6 +25,15 @@ struct FriendsView: View {
         .background(Color(.systemGroupedBackground))
         .navigationTitle("Friends")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                NavigationLink {
+                    FriendInviteView()
+                } label: {
+                    Image(systemName: "person.badge.plus")
+                }
+            }
+        }
     }
 
     private var addPeopleSection: some View {
