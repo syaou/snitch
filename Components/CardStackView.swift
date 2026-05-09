@@ -3,6 +3,7 @@ import SwiftUI
 struct CardStackView: View {
     @EnvironmentObject var viewModel: FeedViewModel
     @EnvironmentObject var groupsViewModel: GroupsViewModel
+    @EnvironmentObject var usersViewModel: UsersViewModel
     @State private var dragOffset: CGSize = .zero
     @State private var skippedIds: Set<UUID> = []
     @State private var snitchTarget: ProofPost?
@@ -202,7 +203,7 @@ struct CardStackView: View {
             dragOffset = CGSize(width: 700, height: 0)
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-            viewModel.castVote(.approve, by: SampleData.profile.id, on: post.id)
+            viewModel.castVote(.approve, by: SampleData.profile.id, on: post.id, users: usersViewModel)
             dragOffset = .zero
         }
     }

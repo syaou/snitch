@@ -2,6 +2,7 @@ import SwiftUI
 
 struct SnitchProofView: View {
     @EnvironmentObject var feedViewModel: FeedViewModel
+    @EnvironmentObject var usersViewModel: UsersViewModel
     @Environment(\.dismiss) private var dismiss
 
     let post: ProofPost
@@ -113,7 +114,7 @@ struct SnitchProofView: View {
 
     private var submitButton: some View {
         Button {
-            feedViewModel.castVote(.snitch, by: SampleData.profile.id, on: post.id)
+            feedViewModel.castVote(.snitch, by: SampleData.profile.id, on: post.id, users: usersViewModel)
             dismiss()
         } label: {
             Text("SNITCH!")

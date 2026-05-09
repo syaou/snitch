@@ -4,10 +4,10 @@ enum SampleData {
 
     // MARK: - USERS
 
-    static let sana  = UserProfile(name: "Sana Yousefi", bio: "Building better habits one step at a time.", goalCount: 4, points: 120)
-    static let alex  = UserProfile(name: "Alex Johnson", bio: "Runner, lifter, snitch master.",             goalCount: 3, points: 95,  trust: 92)
-    static let sarah = UserProfile(name: "Sarah Chen",   bio: "Reading more, scrolling less.",              goalCount: 4, points: 88)
-    static let mike  = UserProfile(name: "Mike Brown",   bio: "Chest day every day.",                       goalCount: 2, points: 72,  trust: 78)
+    static let sana  = UserProfile(name: "Sana Yousefi", bio: "Building better habits one step at a time.", goalCount: 4, points: 120, streak: 7)
+    static let alex  = UserProfile(name: "Alex Johnson", bio: "Runner, lifter, snitch master.",             goalCount: 3, points: 95,  trust: 92, streak: 5)
+    static let sarah = UserProfile(name: "Sarah Chen",   bio: "Reading more, scrolling less.",              goalCount: 4, points: 88,  streak: 3)
+    static let mike  = UserProfile(name: "Mike Brown",   bio: "Chest day every day.",                       goalCount: 2, points: 72,  trust: 78, streak: 4)
 
     static let users: [UserProfile] = [sana, alex, sarah, mike]
     static let profile = sana
@@ -85,12 +85,4 @@ enum SampleData {
         )
     ]
 
-    // MARK: - LEADERBOARD
-
-    static let leaderboardUsers: [LeaderboardUser] = [
-        LeaderboardUser(name: "Sana",  points: 120, subtitle: "7 day streak"),
-        LeaderboardUser(name: "Alex",  points: 95,  subtitle: "5 proofs approved"),
-        LeaderboardUser(name: "Sarah", points: 88,  subtitle: "3 goals completed"),
-        LeaderboardUser(name: "Mike",  points: 72,  subtitle: "4 day streak")
-    ]
 }

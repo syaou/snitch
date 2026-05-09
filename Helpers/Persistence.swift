@@ -32,4 +32,5 @@ enum PersistenceKeys {
     static let posts = "snitch.posts"
     static let groups = "snitch.groups"
     static let activeGroupId = "snitch.activeGroupId"
+    static let users = "snitch.users"
 }
