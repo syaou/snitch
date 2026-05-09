@@ -1,13 +1,18 @@
 import SwiftUI
 
 struct ProofCardSwipeView: View {
+    @EnvironmentObject var usersViewModel: UsersViewModel
     let post: ProofPost
+
+    private var poster: UserProfile? {
+        usersViewModel.user(id: post.userId)
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             photoSection
 
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: 6) {
                 HStack(alignment: .firstTextBaseline) {
                     Text(post.userName)
                         .font(.title3.weight(.semibold))
@@ -21,6 +26,11 @@ struct ProofCardSwipeView: View {
                         .padding(.vertical, 3)
                         .background(Color.black.opacity(0.06))
                         .clipShape(Capsule())
+                }
+
+                HStack(spacing: 10) {
+                    streakChip
+                    trustChip
                 }
 
                 Text(post.goalTitle)
@@ -37,6 +47,24 @@ struct ProofCardSwipeView: View {
                 .stroke(Color.black.opacity(0.08), lineWidth: 1)
         }
         .shadow(color: Color.black.opacity(0.10), radius: 16, y: 8)
+    }
+
+    private var streakChip: some View {
+        HStack(spacing: 4) {
+            Image(systemName: "flame.fill")
+                .foregroundStyle(.orange)
+            Text("\(poster?.streak ?? 0)")
+        }
+        .font(.caption2.weight(.semibold))
+    }
+
+    private var trustChip: some View {
+        HStack(spacing: 4) {
+            Image(systemName: "checkmark.shield.fill")
+                .foregroundStyle(.green)
+            Text("\(poster?.trust ?? 100)")
+        }
+        .font(.caption2.weight(.semibold))
     }
 
     private var photoSection: some View {

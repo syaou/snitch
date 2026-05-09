@@ -7,4 +7,5 @@ struct UserProfile: Identifiable, Codable {
     var goalCount: Int
     var points: Int
     var trust: Int = 100
+    var streak: Int = 0
 }

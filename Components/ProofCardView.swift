@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct ProofCardView: View {
+    @EnvironmentObject var usersViewModel: UsersViewModel
+    @EnvironmentObject var feedViewModel: FeedViewModel
     @State private var isLiked: Bool
     @State private var showComments = false
     @State private var newComment = ""
@@ -10,6 +12,10 @@ struct ProofCardView: View {
     init(post: ProofPost) {
         self.post = post
         _isLiked = State(initialValue: post.isLiked)
+    }
+
+    private var poster: UserProfile? {
+        usersViewModel.user(id: post.userId)
     }
 
     var body: some View {
@@ -49,10 +55,26 @@ struct ProofCardView: View {
                             .font(.caption)
                     }
 
-                VStack(alignment: .leading) {
-                    Text(post.userName)
-                        .font(.subheadline)
-                        .fontWeight(.semibold)
+                VStack(alignment: .leading, spacing: 4) {
+                    HStack(spacing: 8) {
+                        Text(post.userName)
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+
+                        HStack(spacing: 3) {
+                            Image(systemName: "flame.fill")
+                                .foregroundStyle(.orange)
+                            Text("\(poster?.streak ?? 0)")
+                        }
+                        .font(.caption2.weight(.semibold))
+
+                        HStack(spacing: 3) {
+                            Image(systemName: "checkmark.shield.fill")
+                                .foregroundStyle(.green)
+                            Text("\(poster?.trust ?? 100)")
+                        }
+                        .font(.caption2.weight(.semibold))
+                    }
 
                     Text(post.goalTitle)
                         .font(.caption)
@@ -129,6 +151,7 @@ struct ProofCardView: View {
                         TextField("Add a comment...", text: $newComment)
 
                         Button("Send") {
+                            feedViewModel.addComment(to: post.id, text: newComment, by: SampleData.profile.name)
                             newComment = ""
                         }
                         .font(.caption)

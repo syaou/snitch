@@ -10,6 +10,7 @@ struct ProofPost: Identifiable, Codable, Hashable {
     let iconName: String
     let createdAt: Date
     var photoData: Data? = nil
+    var notes: String? = nil
     var votes: [ProofVote] = []
     var comments: [Comment] = []
     var isLiked: Bool = false

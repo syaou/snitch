@@ -2,11 +2,13 @@ import SwiftUI
 
 struct LeaderboardView: View {
     @StateObject private var viewModel = LeaderboardViewModel()
+    @EnvironmentObject var usersViewModel: UsersViewModel
 
     var body: some View {
         NavigationStack {
             List {
-                ForEach(Array(viewModel.users.enumerated()), id: \.element.id) { index, user in
+                let ranked = viewModel.ranked(from: usersViewModel.users)
+                ForEach(Array(ranked.enumerated()), id: \.element.id) { index, user in
                     LeaderboardRowView(user: user, rank: index + 1)
                         .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
                         .listRowSeparator(.hidden)

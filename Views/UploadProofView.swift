@@ -160,6 +160,7 @@ struct UploadProofView: View {
     private func submit() {
         guard let goal = selectedGoal else { return }
 
+        let trimmedNotes = notes.trimmingCharacters(in: .whitespacesAndNewlines)
         let post = ProofPost(
             userId: SampleData.profile.id,
             userName: SampleData.profile.name,
@@ -168,7 +169,8 @@ struct UploadProofView: View {
             groupId: SampleData.defaultGroup.id,
             iconName: "photo.fill",
             createdAt: Date(),
-            photoData: selectedImageData
+            photoData: selectedImageData,
+            notes: trimmedNotes.isEmpty ? nil : trimmedNotes
         )
         feedViewModel.add(post)
 
