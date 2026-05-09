@@ -2,6 +2,7 @@ import SwiftUI
 
 struct CardStackView: View {
     @EnvironmentObject var viewModel: FeedViewModel
+    @EnvironmentObject var groupsViewModel: GroupsViewModel
     @EnvironmentObject var usersViewModel: UsersViewModel
     @State private var dragOffset: CGSize = .zero
     @State private var skippedIds: Set<UUID> = []
@@ -13,6 +14,10 @@ struct CardStackView: View {
     private var queue: [ProofPost] {
         viewModel.posts
             .filter { !skippedIds.contains($0.id) }
+            .filter { post in
+                guard let activeId = groupsViewModel.activeGroupId else { return false }
+                return post.groupId == activeId
+            }
             .filter { $0.status(votersCount: SampleData.votersCount) == .pending }
             .filter { post in
                 !post.votes.contains { $0.voterId == SampleData.profile.id }
