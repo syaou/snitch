@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct FriendInviteView: View {
+    var onDone: (() -> Void)? = nil
+
     @State private var token: UUID = UUID()
 
     private var inviteURL: URL {
@@ -12,7 +14,6 @@ struct FriendInviteView: View {
             VStack(spacing: 22) {
                 headerView
                 linkCard
-                regenerateButton
                 copyButton
                 shareButton
             }
@@ -22,16 +23,21 @@ struct FriendInviteView: View {
         .background(Color(.systemGroupedBackground))
         .navigationTitle("Invite a friend")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            if let onDone {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Done") { onDone() }
+                }
+            }
+        }
     }
 
     private var headerView: some View {
         VStack(spacing: 8) {
-            Text("👯")
-                .font(.system(size: 56))
-            Text("Invite a friend to Snitch")
+            Text("Invite a friend to your group")
                 .font(.title2.bold())
                 .multilineTextAlignment(.center)
-            Text("Tap regenerate for a fresh link, then share it however you like.")
+            Text("Send this link to add them to your group.")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
@@ -49,25 +55,6 @@ struct FriendInviteView: View {
                 RoundedRectangle(cornerRadius: 18)
                     .stroke(Color.black.opacity(0.06), lineWidth: 1)
             }
-    }
-
-    private var regenerateButton: some View {
-        Button {
-            token = UUID()
-        } label: {
-            Label("Generate new link", systemImage: "arrow.clockwise")
-                .font(.subheadline.weight(.semibold))
-                .foregroundStyle(.primary)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 14)
-                .background(Color(.systemBackground))
-                .clipShape(RoundedRectangle(cornerRadius: 14))
-                .overlay {
-                    RoundedRectangle(cornerRadius: 14)
-                        .stroke(Color.black.opacity(0.08), lineWidth: 1)
-                }
-        }
-        .buttonStyle(.plain)
     }
 
     private var copyButton: some View {

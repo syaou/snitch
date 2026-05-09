@@ -19,6 +19,13 @@ enum SampleData {
         memberIds: users.map { $0.id }
     )
 
+    static let gymSquadGroup = SnitchGroup(
+        name: "Gym Squad",
+        memberIds: [alex.id, mike.id]
+    )
+
+    static let groups: [SnitchGroup] = [defaultGroup, gymSquadGroup]
+
     /// Number of friends who could vote on a post (everyone except the poster).
     static var votersCount: Int { defaultGroup.memberIds.count - 1 }
 

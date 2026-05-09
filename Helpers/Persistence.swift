@@ -30,4 +30,6 @@ enum Persistence {
 enum PersistenceKeys {
     static let goals = "snitch.goals"
     static let posts = "snitch.posts"
+    static let groups = "snitch.groups"
+    static let activeGroupId = "snitch.activeGroupId"
 }
