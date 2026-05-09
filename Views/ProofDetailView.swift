@@ -2,6 +2,7 @@ import SwiftUI
 
 struct ProofDetailView: View {
     @EnvironmentObject var feedViewModel: FeedViewModel
+    @EnvironmentObject var usersViewModel: UsersViewModel
 
     let post: ProofPost
 
@@ -10,6 +11,7 @@ struct ProofDetailView: View {
             VStack(alignment: .leading, spacing: 20) {
                 proofImageCard
                 proofHeader
+                notesSection
                 verificationSection
                 stravaSection
                 actionSection
@@ -97,6 +99,25 @@ struct ProofDetailView: View {
         }
     }
 
+    @ViewBuilder
+    private var notesSection: some View {
+        if let notes = post.notes, !notes.isEmpty {
+            VStack(alignment: .leading, spacing: 8) {
+                Text("NOTES")
+                    .font(.caption)
+                    .fontWeight(.bold)
+                    .foregroundStyle(.secondary)
+
+                Text(notes)
+                    .font(.subheadline)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(16)
+                    .background(Color(.systemBackground))
+                    .clipShape(RoundedRectangle(cornerRadius: 16))
+            }
+        }
+    }
+
     private var verificationSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("VERIFICATION CHECKS")
@@ -181,7 +202,7 @@ struct ProofDetailView: View {
     private var actionSection: some View {
         HStack(spacing: 12) {
             Button {
-                feedViewModel.castVote(.approve, by: SampleData.profile.id, on: post.id)
+                feedViewModel.castVote(.approve, by: SampleData.profile.id, on: post.id, users: usersViewModel)
             } label: {
                 Text("Approve")
                     .font(.headline)
