@@ -31,10 +31,49 @@ enum SampleData {
 
     // MARK: - GOALS
 
-    static let gymGoal   = Goal(title: "Go to gym 3x a week",       description: "Stay consistent with strength and cardio sessions this week.", status: .onTrack,  groupId: defaultGroup.id, createdAt: Date())
-    static let studyGoal = Goal(title: "Study 2 hours daily",       description: "Keep a focused study routine and log your daily progress.",    status: .onTrack,  groupId: defaultGroup.id, createdAt: Date())
-    static let walkGoal  = Goal(title: "Walk 10k steps",            description: "Hit your step goal on most days and keep your streak alive.",  status: .missed,   groupId: defaultGroup.id, createdAt: Date())
-    static let readGoal  = Goal(title: "Read 20 Pages · 30 min",    description: "Daily reading habit.",                                         status: .achieved, groupId: defaultGroup.id, createdAt: Date())
+    static let gymGoal = Goal(
+        title: "Go to gym 3x a week",
+        description: "Stay consistent with strength and cardio sessions this week.",
+        status: .onTrack,
+        groupId: defaultGroup.id,
+        createdAt: Date(),
+        targetCount: 3,
+        frequency: .weekly,
+        durationDays: 30
+    )
+
+    static let studyGoal = Goal(
+        title: "Study 2 hours daily",
+        description: "Keep a focused study routine and log your daily progress.",
+        status: .onTrack,
+        groupId: defaultGroup.id,
+        createdAt: Date(),
+        targetCount: 1,
+        frequency: .daily,
+        durationDays: 30
+    )
+
+    static let walkGoal = Goal(
+        title: "Walk 10k steps",
+        description: "Hit your step goal on most days and keep your streak alive.",
+        status: .missed,
+        groupId: defaultGroup.id,
+        createdAt: Date(),
+        targetCount: 1,
+        frequency: .daily,
+        durationDays: 14
+    )
+
+    static let readGoal = Goal(
+        title: "Read 20 Pages · 30 min",
+        description: "Daily reading habit.",
+        status: .achieved,
+        groupId: defaultGroup.id,
+        createdAt: Date(),
+        targetCount: 1,
+        frequency: .daily,
+        durationDays: 30
+    )
 
     static let goals: [Goal] = [gymGoal, studyGoal, walkGoal]
 

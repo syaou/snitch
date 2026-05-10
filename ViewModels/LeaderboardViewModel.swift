@@ -2,8 +2,11 @@ import Foundation
 import Combine
 
 final class LeaderboardViewModel: ObservableObject {
-    func ranked(from profiles: [UserProfile]) -> [LeaderboardUser] {
-        profiles
+    func ranked(from profiles: [UserProfile], memberIds: [UUID]) -> [LeaderboardUser] {
+        let memberIdSet = Set(memberIds)
+
+        return profiles
+            .filter { memberIdSet.contains($0.id) }
             .sorted { $0.points > $1.points }
             .map {
                 LeaderboardUser(
