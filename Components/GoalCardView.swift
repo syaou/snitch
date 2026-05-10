@@ -23,23 +23,19 @@ struct GoalCardView: View {
                     Text(goal.description)
                         .font(.system(size: 12))
                         .foregroundStyle(.secondary)
+
+                    Text(goal.scheduleText)
+                        .font(.caption2)
+                        .fontWeight(.medium)
+                        .foregroundStyle(.blue)
                 }
 
                 Spacer()
-
-                Text(streakText)
-                    .font(.caption2)
-                    .fontWeight(.semibold)
-                    .foregroundStyle(.orange)
-                    .padding(.horizontal, 9)
-                    .padding(.vertical, 5)
-                    .background(Color.orange.opacity(0.12))
-                    .clipShape(Capsule())
             }
 
             VStack(alignment: .leading, spacing: 7) {
                 HStack {
-                    Text("This Week")
+                    Text(progressPeriodText)
                         .font(.caption2)
                         .foregroundStyle(.secondary)
 
@@ -75,16 +71,18 @@ struct GoalCardView: View {
         case "Go to gym 3x a week": return "2 / 3"
         case "Study 2 hours daily": return "5 / 7"
         case "Walk 10k steps": return "4 / 7"
-        default: return "1 / 1"
+        default: return "0 / \(goal.targetCount)"
         }
     }
 
-    private var streakText: String {
-        switch goal.title {
-        case "Go to gym 3x a week": return "🔥 12"
-        case "Study 2 hours daily": return "🔥 8"
-        case "Walk 10k steps": return "🔥 24"
-        default: return "🔥 5"
+    private var progressPeriodText: String {
+        switch goal.frequency {
+        case .daily:
+            return "Today"
+        case .weekly:
+            return "This Week"
+        case .monthly:
+            return "This Month"
         }
     }
 
