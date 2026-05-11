@@ -5,18 +5,18 @@ struct StatCardView: View {
     let value: String
 
     var body: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: 10) {
             Text(value)
                 .font(.title2)
-                .fontWeight(.bold)
+                .fontWeight(.black)
+                .foregroundStyle(AppColours.ink)
 
             Text(title)
-                .font(.caption)
-                .foregroundStyle(.secondary)
+                .font(.caption.weight(.black))
+                .foregroundStyle(AppColours.muted)
         }
         .frame(maxWidth: .infinity)
         .padding()
-        .background(AppColours.cardBackground)
-        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .stampCard(background: title == "Points" ? AppColours.acid : AppColours.cream, shadowOffset: 3)
     }
 }

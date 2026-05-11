@@ -5,19 +5,17 @@ struct CardStackView: View {
     @EnvironmentObject var groupsViewModel: GroupsViewModel
     @EnvironmentObject var usersViewModel: UsersViewModel
     @State private var dragOffset: CGSize = .zero
-    @State private var skippedIds: Set<UUID> = []
     @State private var snitchTarget: ProofPost?
 
     private let voteThreshold: CGFloat = 110
-    private let skipThreshold: CGFloat = 110
 
     private var queue: [ProofPost] {
         viewModel.posts
-            .filter { !skippedIds.contains($0.id) }
             .filter { post in
                 guard let activeId = groupsViewModel.activeGroupId else { return false }
                 return post.groupId == activeId
             }
+            .filter { $0.userId != SampleData.profile.id }
             .filter { $0.status(votersCount: SampleData.votersCount) == .pending }
             .filter { post in
                 !post.votes.contains { $0.voterId == SampleData.profile.id }
@@ -69,101 +67,55 @@ struct CardStackView: View {
     private var voteBadges: some View {
         ZStack {
             HStack {
-                Text("APPROVE")
-                    .font(.system(size: 22, weight: .black))
-                    .foregroundStyle(.green)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 8)
-                    .background(.black.opacity(0.85))
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
-                    .overlay {
-                        RoundedRectangle(cornerRadius: 12)
-                            .stroke(.green, lineWidth: 2)
-                    }
-                    .rotationEffect(.degrees(-10))
+                StampPill(tone: .approved, label: "approve")
+                    .rotationEffect(.degrees(-8))
                     .opacity(horizontalDominant && dragOffset.width > 30 ? min(dragOffset.width / 100, 1) : 0)
 
                 Spacer()
 
-                Text("SNITCH")
-                    .font(.system(size: 22, weight: .black))
-                    .foregroundStyle(.red)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 8)
-                    .background(.black.opacity(0.85))
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
-                    .overlay {
-                        RoundedRectangle(cornerRadius: 12)
-                            .stroke(.red, lineWidth: 2)
-                    }
-                    .rotationEffect(.degrees(10))
+                StampPill(tone: .snitched, label: "snitch")
+                    .rotationEffect(.degrees(8))
                     .opacity(horizontalDominant && dragOffset.width < -30 ? min(-dragOffset.width / 100, 1) : 0)
             }
             .padding(.horizontal, 20)
-
-            Text("SKIP")
-                .font(.system(size: 22, weight: .black))
-                .foregroundStyle(.white)
-                .padding(.horizontal, 14)
-                .padding(.vertical, 8)
-                .background(.black.opacity(0.85))
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-                .overlay {
-                    RoundedRectangle(cornerRadius: 12)
-                        .stroke(.white, lineWidth: 2)
-                }
-                .opacity(!horizontalDominant && dragOffset.height < -30 ? min(-dragOffset.height / 100, 1) : 0)
         }
     }
 
     private var swipeHint: some View {
-        HStack(spacing: 8) {
-            Text("←").bold()
-            Text("snitch")
-            Text("·")
-            Text("approve")
-            Text("→").bold()
-            Text("·")
-            Text("↑").bold()
-            Text("skip")
+        HStack(spacing: 10) {
+            Label("snitch", systemImage: "arrow.left")
+            Rectangle()
+                .fill(AppColours.ink)
+                .frame(width: 3, height: 3)
+            Label("approve", systemImage: "arrow.right")
         }
-        .font(.caption.weight(.medium))
-        .foregroundStyle(.secondary)
-        .padding(.horizontal, 14)
-        .padding(.vertical, 8)
-        .background(Color(.systemGray6))
-        .clipShape(Capsule())
+        .font(.system(size: 12, weight: .black))
+        .foregroundStyle(AppColours.ink)
+        .padding(.horizontal, 12)
+        .padding(.vertical, 9)
+        .stampCard(background: AppColours.cream, shadowOffset: 2)
         .opacity(queue.isEmpty ? 0 : 0.9)
     }
 
     private var emptyState: some View {
         VStack(spacing: 14) {
+            Image(systemName: "checkmark.circle.fill")
+                .font(.system(size: 42, weight: .black))
+                .foregroundStyle(AppColours.ink)
+
             Text("All caught up")
-                .font(.title.bold())
+                .font(.system(size: 28, weight: .black))
+                .foregroundStyle(AppColours.ink)
                 .multilineTextAlignment(.center)
+
             Text("No pending proofs to review.")
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
+                .font(.system(size: 14, weight: .semibold))
+                .foregroundStyle(AppColours.muted)
                 .multilineTextAlignment(.center)
-            if !skippedIds.isEmpty {
-                Button {
-                    withAnimation(.spring()) {
-                        skippedIds.removeAll()
-                    }
-                } label: {
-                    Text("Bring back skipped (\(skippedIds.count))")
-                        .font(.caption.weight(.semibold))
-                        .foregroundStyle(.white)
-                        .padding(.horizontal, 14)
-                        .padding(.vertical, 10)
-                        .background(.blue)
-                        .clipShape(Capsule())
-                }
-                .buttonStyle(.plain)
-                .padding(.top, 8)
-            }
         }
         .padding(40)
+        .frame(maxWidth: .infinity)
+        .stampCard(background: AppColours.cream, shadowOffset: 5)
     }
 
     private func dragGesture(for post: ProofPost) -> some Gesture {
@@ -183,11 +135,7 @@ struct CardStackView: View {
                         snapBack()
                     }
                 } else {
-                    if value.translation.height < -skipThreshold {
-                        skip(post)
-                    } else {
-                        snapBack()
-                    }
+                    snapBack()
                 }
             }
     }
@@ -215,16 +163,6 @@ struct CardStackView: View {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
             dragOffset = .zero
             snitchTarget = post
-        }
-    }
-
-    private func skip(_ post: ProofPost) {
-        withAnimation(.easeOut(duration: 0.3)) {
-            dragOffset = CGSize(width: 0, height: -800)
-        }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-            skippedIds.insert(post.id)
-            dragOffset = .zero
         }
     }
 }

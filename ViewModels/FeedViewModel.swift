@@ -59,18 +59,11 @@ final class FeedViewModel: ObservableObject {
         case .approved:
             users.update(post.userId) { profile in
                 profile.points += 10
-                profile.trust = min(100, profile.trust + 2)
                 profile.streak += 1
-            }
-            for vote in post.votes where vote.vote == .snitch {
-                users.update(vote.voterId) { profile in
-                    profile.trust = max(0, profile.trust - 3)
-                }
             }
         case .rejected:
             users.update(post.userId) { profile in
                 profile.points = max(0, profile.points - 5)
-                profile.trust = max(0, profile.trust - 5)
                 profile.streak = 0
             }
 

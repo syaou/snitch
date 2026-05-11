@@ -20,7 +20,6 @@ struct SnitchProofView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 18) {
-                headerCard
                 reasonsSection
                 noteSection
                 warningSection
@@ -30,49 +29,26 @@ struct SnitchProofView: View {
             .padding(.horizontal, 20)
             .padding(.vertical, 16)
         }
-        .background(Color(.systemGroupedBackground))
-        .navigationTitle("About to snitch?")
+        .background(AppColours.mustard)
         .navigationBarTitleDisplayMode(.inline)
-    }
-
-    private var headerCard: some View {
-        HStack(alignment: .top, spacing: 12) {
-            Image(systemName: "flag")
-                .font(.title3)
-                .foregroundStyle(Color.orange.opacity(0.95))
-
-            VStack(alignment: .leading, spacing: 4) {
-                Text("Snitching on \(post.userName)'s proof")
-                    .font(.headline)
-
-                Text("\(post.goalTitle) · submitted \(post.timeAgo)")
-                    .font(.subheadline)
-                    .foregroundStyle(Color.orange.opacity(0.95))
-            }
-
-            Spacer()
-        }
-        .padding(18)
-        .background(Color.orange.opacity(0.14))
-        .clipShape(RoundedRectangle(cornerRadius: 20))
     }
 
     private var reasonsSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("WHAT LOOKS WRONG?")
-                .font(.caption)
-                .fontWeight(.bold)
-                .foregroundStyle(.secondary)
+            sectionLabel("What looks wrong?", icon: "magnifyingglass")
 
             VStack(spacing: 10) {
-                ForEach(reasons, id: \.0) { reason in
+                ForEach(Array(reasons.enumerated()), id: \.element.0) { index, reason in
                     FlagReasonRow(
                         title: reason.0,
                         subtitle: reason.1,
-                        isSelected: selectedReason == reason.0
+                        isSelected: selectedReason == reason.0,
+                        iconName: reasonIcon(for: index)
                     )
                     .onTapGesture {
-                        selectedReason = reason.0
+                        withAnimation(.spring(response: 0.25, dampingFraction: 0.8)) {
+                            selectedReason = reason.0
+                        }
                     }
                 }
             }
@@ -81,59 +57,68 @@ struct SnitchProofView: View {
 
     private var noteSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("ADD A NOTE (OPTIONAL)")
-                .font(.caption)
-                .fontWeight(.bold)
-                .foregroundStyle(.secondary)
+            sectionLabel("Add a note", icon: "text.bubble.fill")
 
             TextField("Give more context to help the group decide...", text: $note, axis: .vertical)
                 .lineLimit(4, reservesSpace: true)
                 .padding(16)
-                .background(Color(.systemBackground))
-                .clipShape(RoundedRectangle(cornerRadius: 18))
-                .overlay {
-                    RoundedRectangle(cornerRadius: 18)
-                        .stroke(Color.black.opacity(0.08), lineWidth: 1)
-                }
+                .stampCard(background: AppColours.cream, shadowOffset: 2)
         }
     }
 
     private var warningSection: some View {
         HStack(alignment: .top, spacing: 12) {
-            Image(systemName: "exclamationmark.circle")
-                .foregroundStyle(.red)
+            Image(systemName: "shield.lefthalf.filled")
+                .font(.headline.weight(.black))
+                .foregroundStyle(AppColours.ink)
+                .frame(width: 34, height: 34)
+                .background(AppColours.mustard)
+                .overlay(Circle().stroke(AppColours.ink, lineWidth: 1.2))
+                .clipShape(Circle())
 
-            Text("You sure you want to snitch? If you're wrong, you'll lose trust.")
-                .font(.subheadline)
-                .foregroundStyle(.red.opacity(0.95))
+            Text("Only snitch when the proof looks wrong.")
+                .font(.subheadline.weight(.bold))
+                .foregroundStyle(AppColours.ink)
         }
         .padding(16)
-        .background(Color.red.opacity(0.10))
-        .clipShape(RoundedRectangle(cornerRadius: 18))
+        .stampCard(background: AppColours.cream, shadowOffset: 3)
     }
 
     private var submitButton: some View {
-        Button {
+        AppButton(kind: .snitch) {
             feedViewModel.castVote(.snitch, by: SampleData.profile.id, on: post.id, users: usersViewModel)
             dismiss()
         } label: {
-            Text("SNITCH!")
-                .font(.headline)
-                .foregroundStyle(.white)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 16)
-                .background(Color.red)
-                .clipShape(RoundedRectangle(cornerRadius: 18))
+            Label("Submit Snitch", systemImage: "flag.fill")
         }
-        .buttonStyle(.plain)
     }
 
     private var footerNote: some View {
-        Text("Group vote decides · 2 of 3 voters must agree")
-            .font(.footnote)
-            .foregroundStyle(.secondary)
+        Label("Group vote decides · 2 of 3 voters must agree", systemImage: "person.2.fill")
+            .font(.footnote.weight(.bold))
+            .foregroundStyle(AppColours.muted)
             .frame(maxWidth: .infinity, alignment: .center)
             .padding(.bottom, 12)
+    }
+
+    private func sectionLabel(_ title: String, icon: String) -> some View {
+        Label(title, systemImage: icon)
+            .font(.caption.weight(.black))
+            .foregroundStyle(AppColours.ink)
+            .textCase(.uppercase)
+    }
+
+    private func reasonIcon(for index: Int) -> String {
+        switch index {
+        case 0:
+            return "photo.on.rectangle.angled"
+        case 1:
+            return "figure.walk"
+        case 2:
+            return "bolt.slash.fill"
+        default:
+            return "ellipsis.bubble.fill"
+        }
     }
 }
 
@@ -141,24 +126,37 @@ private struct FlagReasonRow: View {
     let title: String
     let subtitle: String
     let isSelected: Bool
+    let iconName: String
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text(title)
-                .font(.headline)
-                .foregroundStyle(isSelected ? .blue : .primary)
+        HStack(alignment: .top, spacing: 12) {
+            Image(systemName: iconName)
+                .font(.headline.weight(.black))
+                .foregroundStyle(isSelected ? AppColours.mustard : AppColours.ink)
+                .frame(width: 38, height: 38)
+                .background(isSelected ? AppColours.ink : AppColours.mustard.opacity(0.75))
+                .overlay(Circle().stroke(AppColours.ink, lineWidth: 1.2))
+                .clipShape(Circle())
 
-            Text(subtitle)
-                .font(.subheadline)
-                .foregroundStyle(isSelected ? .blue : .secondary)
+            VStack(alignment: .leading, spacing: 4) {
+                Text(title)
+                    .font(.headline.weight(.black))
+                    .foregroundStyle(AppColours.ink)
+
+                Text(subtitle)
+                    .font(.caption.weight(.bold))
+                    .foregroundStyle(AppColours.muted)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+
+            Spacer()
+
+            Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
+                .font(.headline.weight(.black))
+                .foregroundStyle(isSelected ? AppColours.ink : AppColours.line)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(16)
-        .background(isSelected ? Color.blue.opacity(0.12) : Color(.systemBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 18))
-        .overlay {
-            RoundedRectangle(cornerRadius: 18)
-                .stroke(isSelected ? Color.blue : Color.black.opacity(0.08), lineWidth: isSelected ? 2 : 1)
-        }
+        .stampCard(background: isSelected ? AppColours.acid.opacity(0.85) : AppColours.cream, shadowOffset: isSelected ? 4 : 2)
     }
 }

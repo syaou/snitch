@@ -8,6 +8,25 @@
 import SwiftUI
 
 struct MainTabView: View {
+    init() {
+        let appearance = UITabBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = UIColor(AppColours.ink)
+        appearance.shadowColor = .clear
+
+        appearance.stackedLayoutAppearance.normal.iconColor = UIColor.white.withAlphaComponent(0.55)
+        appearance.stackedLayoutAppearance.normal.titleTextAttributes = [
+            .foregroundColor: UIColor.white.withAlphaComponent(0.55)
+        ]
+        appearance.stackedLayoutAppearance.selected.iconColor = UIColor(AppColours.yellow)
+        appearance.stackedLayoutAppearance.selected.titleTextAttributes = [
+            .foregroundColor: UIColor(AppColours.yellow)
+        ]
+
+        UITabBar.appearance().standardAppearance = appearance
+        UITabBar.appearance().scrollEdgeAppearance = appearance
+    }
+
     var body: some View {
         TabView {
             FeedView()

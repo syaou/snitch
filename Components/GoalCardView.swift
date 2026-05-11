@@ -4,66 +4,79 @@ struct GoalCardView: View {
     let goal: Goal
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 14) {
+        VStack(alignment: .leading, spacing: 12) {
             HStack(alignment: .top, spacing: 12) {
                 ZStack {
-                    Circle()
-                        .fill(Color.black)
-                        .frame(width: 34, height: 34)
+                    RoundedRectangle(cornerRadius: 4)
+                        .fill(AppColours.mustard)
+                        .frame(width: 38, height: 38)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 4)
+                                .stroke(AppColours.ink, lineWidth: 1.2)
+                        )
 
                     Image(systemName: "target")
-                        .font(.system(size: 14, weight: .semibold))
-                        .foregroundStyle(.white)
+                        .font(.system(size: 15, weight: .black))
+                        .foregroundStyle(AppColours.ink)
                 }
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(goal.title)
-                        .font(.system(size: 15, weight: .semibold))
+                        .font(.system(size: 16, weight: .black))
+                        .foregroundStyle(AppColours.ink)
 
                     Text(goal.description)
                         .font(.system(size: 12))
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(AppColours.muted)
 
-                    Text(goal.scheduleText)
-                        .font(.caption2)
-                        .fontWeight(.medium)
-                        .foregroundStyle(.blue)
+                    StampPill(tone: .neutral, label: goal.scheduleText)
                 }
 
                 Spacer()
+
+                Image(systemName: "chevron.right")
+                    .font(.caption.weight(.black))
+                    .foregroundStyle(AppColours.ink.opacity(0.45))
             }
+
+            Divider()
+                .background(AppColours.ink)
 
             VStack(alignment: .leading, spacing: 7) {
                 HStack {
+                    Image(systemName: "chart.bar.fill")
+                        .font(.caption2)
+                        .foregroundStyle(AppColours.ink)
+
                     Text(progressPeriodText)
                         .font(.caption2)
-                        .foregroundStyle(.secondary)
+                        .fontWeight(.bold)
+                        .foregroundStyle(AppColours.muted)
 
                     Spacer()
 
                     Text(progressShortText)
                         .font(.caption2)
-                        .foregroundStyle(.secondary)
+                        .fontWeight(.black)
+                        .foregroundStyle(AppColours.ink)
                 }
 
                 GeometryReader { geometry in
                     ZStack(alignment: .leading) {
                         Capsule()
-                            .fill(Color.gray.opacity(0.16))
-                            .frame(height: 5)
+                            .fill(AppColours.ringIdle)
+                            .frame(height: 7)
 
                         Capsule()
-                            .fill(Color.black)
-                            .frame(width: geometry.size.width * progressValue, height: 5)
+                            .fill(AppColours.ink)
+                            .frame(width: geometry.size.width * progressValue, height: 7)
                     }
                 }
-                .frame(height: 5)
+                .frame(height: 7)
             }
         }
         .padding(16)
-        .background(Color.white)
-        .clipShape(RoundedRectangle(cornerRadius: 18))
-        .shadow(color: .black.opacity(0.06), radius: 12, x: 0, y: 6)
+        .stampCard(background: AppColours.cream, shadowOffset: 3)
     }
 
     private var progressShortText: String {
@@ -91,7 +104,7 @@ struct GoalCardView: View {
         case "Go to gym 3x a week": return 0.67
         case "Study 2 hours daily": return 0.71
         case "Walk 10k steps": return 0.57
-        default: return 1
+        default: return 0
         }
     }
 }

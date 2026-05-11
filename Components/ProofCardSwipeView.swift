@@ -10,61 +10,62 @@ struct ProofCardSwipeView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
+            header
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
+                .frame(maxWidth: .infinity)
+                .background(AppColours.mustard)
+                .overlay(
+                    Rectangle()
+                        .fill(AppColours.ink)
+                        .frame(height: 1.2)
+                        .frame(maxHeight: .infinity, alignment: .bottom)
+                )
+
             photoSection
 
-            VStack(alignment: .leading, spacing: 6) {
-                HStack(alignment: .firstTextBaseline) {
-                    Text(post.userName)
-                        .font(.title3.weight(.semibold))
-                        .lineLimit(1)
+            footer
+                .padding(12)
+                .background(AppColours.cream)
+                .overlay(
+                    Rectangle()
+                        .fill(AppColours.ink)
+                        .frame(height: 1.2)
+                        .frame(maxHeight: .infinity, alignment: .top)
+                )
+        }
+        .stampCard(background: AppColours.cream, shadowOffset: 4)
+    }
 
-                    Spacer()
+    private var header: some View {
+        HStack(spacing: 8) {
+            AvatarRingView(profile: poster, streak: poster?.streak ?? 0, size: 28, showStreakBadge: false)
 
-                    Text(post.timeAgo)
-                        .font(.caption2.weight(.semibold))
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 3)
-                        .background(Color.black.opacity(0.06))
-                        .clipShape(Capsule())
-                }
+            Text(post.userName)
+                .font(.system(size: 13, weight: .bold))
+                .foregroundStyle(AppColours.ink)
+                .lineLimit(1)
 
-                HStack(spacing: 10) {
-                    streakChip
-                    trustChip
-                }
+            Spacer()
 
-                Text(post.goalTitle)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                    .lineLimit(1)
+            Kicker(text: post.timeAgo)
+        }
+    }
+
+    private var footer: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text("Goal - \(post.goalTitle)".uppercased())
+                .font(.system(size: 16, weight: .black))
+                .foregroundStyle(AppColours.ink)
+                .lineLimit(1)
+
+            if let notes = post.notes, !notes.isEmpty {
+                Text("\"\(notes)\"")
+                    .font(.system(size: 13, weight: .medium))
+                    .foregroundStyle(AppColours.ink)
+                    .lineLimit(2)
             }
-            .padding(14)
         }
-        .background(Color(.systemBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 24))
-        .overlay {
-            RoundedRectangle(cornerRadius: 24)
-                .stroke(Color.black.opacity(0.08), lineWidth: 1)
-        }
-        .shadow(color: Color.black.opacity(0.10), radius: 16, y: 8)
-    }
-
-    private var streakChip: some View {
-        HStack(spacing: 4) {
-            Image(systemName: "flame.fill")
-                .foregroundStyle(.orange)
-            Text("\(poster?.streak ?? 0)")
-        }
-        .font(.caption2.weight(.semibold))
-    }
-
-    private var trustChip: some View {
-        HStack(spacing: 4) {
-            Image(systemName: "checkmark.shield.fill")
-                .foregroundStyle(.green)
-            Text("\(poster?.trust ?? 100)")
-        }
-        .font(.caption2.weight(.semibold))
     }
 
     private var photoSection: some View {
@@ -74,16 +75,18 @@ struct ProofCardSwipeView: View {
                     .resizable()
                     .scaledToFill()
                     .frame(maxWidth: .infinity)
-                    .frame(height: 320)
+                    .frame(height: 280)
                     .clipped()
             } else {
-                Color.blue.opacity(0.10)
-                    .frame(height: 320)
-                    .overlay {
-                        Image(systemName: post.iconName)
-                            .font(.system(size: 70))
-                            .foregroundStyle(.blue.opacity(0.6))
-                    }
+                ZStack {
+                    Rectangle()
+                        .fill(AppColours.mustard.opacity(0.6))
+
+                    Image(systemName: post.iconName)
+                        .font(.system(size: 70))
+                        .foregroundStyle(AppColours.ink.opacity(0.45))
+                }
+                .frame(height: 280)
             }
         }
     }

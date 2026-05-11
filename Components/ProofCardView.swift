@@ -67,13 +67,6 @@ struct ProofCardView: View {
                             Text("\(poster?.streak ?? 0)")
                         }
                         .font(.caption2.weight(.semibold))
-
-                        HStack(spacing: 3) {
-                            Image(systemName: "checkmark.shield.fill")
-                                .foregroundStyle(.green)
-                            Text("\(poster?.trust ?? 100)")
-                        }
-                        .font(.caption2.weight(.semibold))
                     }
 
                     Text(post.goalTitle)

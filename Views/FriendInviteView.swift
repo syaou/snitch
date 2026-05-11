@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct FriendInviteView: View {
+    @Environment(\.dismiss) private var dismiss
     var onDone: (() -> Void)? = nil
 
     @State private var token: UUID = UUID()
@@ -15,76 +16,75 @@ struct FriendInviteView: View {
                 headerView
                 linkCard
                 copyButton
-                shareButton
             }
             .padding(.horizontal, 20)
-            .padding(.vertical, 24)
+            .padding(.top, 24)
+            .padding(.bottom, 24)
         }
-        .background(Color(.systemGroupedBackground))
-        .navigationTitle("Invite a friend")
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            if let onDone {
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Done") { onDone() }
-                }
-            }
-        }
+        .background(AppColours.canvas)
+        .navigationBarHidden(true)
     }
 
     private var headerView: some View {
-        VStack(spacing: 8) {
-            Text("Invite a friend to your group")
-                .font(.title2.bold())
-                .multilineTextAlignment(.center)
-            Text("Send this link to add them to your group.")
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-                .multilineTextAlignment(.center)
+        HStack(alignment: .top, spacing: 12) {
+            VStack(alignment: .leading, spacing: 6) {
+                Text("Invite a friend")
+                    .font(.system(size: 34, weight: .black))
+                    .foregroundStyle(AppColours.ink)
+
+                Text("Share this link so they can join your group and start reviewing proof.")
+                    .font(.caption.weight(.bold))
+                    .foregroundStyle(AppColours.muted)
+            }
+
+            Spacer()
+
+            closeButton
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private var closeButton: some View {
+        Button {
+            if let onDone {
+                onDone()
+            } else {
+                dismiss()
+            }
+        } label: {
+            Image(systemName: "xmark")
+                .font(.headline.weight(.black))
+                .foregroundStyle(AppColours.ink)
+                .frame(width: 38, height: 38)
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .padding(.top, 2)
     }
 
     private var linkCard: some View {
-        Text(inviteURL.absoluteString)
-            .font(.system(.subheadline, design: .monospaced))
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(16)
-            .background(Color(.systemBackground))
-            .clipShape(RoundedRectangle(cornerRadius: 18))
-            .overlay {
-                RoundedRectangle(cornerRadius: 18)
-                    .stroke(Color.black.opacity(0.06), lineWidth: 1)
-            }
+        VStack(alignment: .leading, spacing: 10) {
+            Label("Invite Link", systemImage: "paperclip")
+                .font(.caption.weight(.black))
+                .foregroundStyle(AppColours.ink)
+
+            Text(inviteURL.absoluteString)
+                .font(.system(.caption, design: .monospaced).weight(.semibold))
+                .foregroundStyle(AppColours.muted)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(14)
+                .stampCard(background: AppColours.paper, shadowOffset: 2)
+        }
+        .padding(16)
+        .stampCard(background: AppColours.cream, shadowOffset: 3)
     }
 
     private var copyButton: some View {
-        Button {
+        AppButton(kind: .secondary) {
             UIPasteboard.general.string = inviteURL.absoluteString
         } label: {
             Label("Copy link", systemImage: "doc.on.doc")
-                .font(.subheadline.weight(.semibold))
-                .foregroundStyle(.primary)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 14)
-                .background(Color(.systemBackground))
-                .clipShape(RoundedRectangle(cornerRadius: 14))
-                .overlay {
-                    RoundedRectangle(cornerRadius: 14)
-                        .stroke(Color.black.opacity(0.08), lineWidth: 1)
-                }
         }
-        .buttonStyle(.plain)
     }
 
-    private var shareButton: some View {
-        ShareLink(item: inviteURL) {
-            Label("Share link", systemImage: "square.and.arrow.up")
-                .font(.headline)
-                .foregroundStyle(.white)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 16)
-                .background(Color.black)
-                .clipShape(RoundedRectangle(cornerRadius: 16))
-        }
-    }
 }

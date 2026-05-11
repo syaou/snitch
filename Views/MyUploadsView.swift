@@ -11,41 +11,53 @@ struct MyUploadsView: View {
     }
 
     var body: some View {
-        List {
-            if myUploads.isEmpty {
-                emptyState
-                    .listRowSeparator(.hidden)
-            } else {
-                ForEach(myUploads) { post in
-                    NavigationLink {
-                        ProofDetailView(post: post)
-                    } label: {
-                        MyUploadRowView(post: post)
+        ScrollView {
+            VStack(alignment: .leading, spacing: 14) {
+                Kicker(text: "profile")
+
+                Text("My Uploads")
+                    .font(.system(size: 34, weight: .black))
+                    .foregroundStyle(AppColours.ink)
+
+                if myUploads.isEmpty {
+                    emptyState
+                } else {
+                    ForEach(myUploads) { post in
+                        NavigationLink {
+                            ProofDetailView(post: post)
+                        } label: {
+                            MyUploadRowView(post: post)
+                        }
+                        .buttonStyle(.plain)
                     }
-                    .listRowSeparator(.hidden)
                 }
             }
+            .padding(.horizontal, 20)
+            .padding(.top, 8)
+            .padding(.bottom, 90)
         }
-        .listStyle(.plain)
-        .navigationTitle("My Uploads")
+        .background(AppColours.mustard)
+        .navigationBarTitleDisplayMode(.inline)
     }
 
     private var emptyState: some View {
         VStack(spacing: 10) {
             Image(systemName: "photo.on.rectangle")
-                .font(.system(size: 36))
-                .foregroundStyle(.secondary)
+                .font(.system(size: 34, weight: .black))
+                .foregroundStyle(AppColours.ink)
 
             Text("No uploads yet")
-                .font(.headline)
+                .font(.headline.weight(.black))
+                .foregroundStyle(AppColours.ink)
 
             Text("Photos you submit as proof will show up here.")
                 .font(.subheadline)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(AppColours.muted)
                 .multilineTextAlignment(.center)
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 48)
+        .stampCard(background: AppColours.cream, shadowOffset: 4)
     }
 }
 
@@ -70,24 +82,26 @@ private struct MyUploadRowView: View {
 
             VStack(alignment: .leading, spacing: 6) {
                 Text(post.goalTitle)
-                    .font(.headline)
+                    .font(.headline.weight(.black))
+                    .foregroundStyle(AppColours.ink)
 
                 Text(post.timeAgo)
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(AppColours.muted)
 
                 HStack(spacing: 8) {
                     statusBadge
 
                     Text("\(approveCount) approve · \(snitchCount) snitch")
                         .font(.caption2)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(AppColours.muted)
                 }
             }
 
             Spacer()
         }
-        .padding(.vertical, 8)
+        .padding(12)
+        .stampCard(background: AppColours.cream, shadowOffset: 3)
     }
 
     @ViewBuilder
@@ -97,37 +111,34 @@ private struct MyUploadRowView: View {
                 .resizable()
                 .scaledToFill()
                 .frame(width: 72, height: 72)
-                .clipShape(RoundedRectangle(cornerRadius: 12))
+                .clipShape(RoundedRectangle(cornerRadius: 4))
         } else {
-            RoundedRectangle(cornerRadius: 12)
-                .fill(Color.blue.opacity(0.12))
+            RoundedRectangle(cornerRadius: 4)
+                .fill(AppColours.mustard.opacity(0.55))
                 .frame(width: 72, height: 72)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 4)
+                        .stroke(AppColours.ink, lineWidth: 1)
+                )
                 .overlay {
                     Image(systemName: post.iconName)
-                        .foregroundStyle(.blue)
+                        .foregroundStyle(AppColours.ink)
                 }
         }
     }
 
     private var statusBadge: some View {
-        Text(status.displayName)
-            .font(.caption2)
-            .fontWeight(.semibold)
-            .foregroundStyle(statusColor)
-            .padding(.horizontal, 8)
-            .padding(.vertical, 4)
-            .background(statusColor.opacity(0.12))
-            .clipShape(Capsule())
+        StampPill(tone: statusTone, label: status.displayName)
     }
 
-    private var statusColor: Color {
+    private var statusTone: StampPill.Tone {
         switch status {
         case .pending:
-            return .orange
+            return .pending
         case .approved:
-            return .green
+            return .approved
         case .rejected:
-            return .red
+            return .snitched
         }
     }
 }
