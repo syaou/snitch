@@ -2,7 +2,12 @@ import SwiftUI
 
 struct GoalsView: View {
     @EnvironmentObject var viewModel: GoalsViewModel
+    @EnvironmentObject var groupsViewModel: GroupsViewModel
     @State private var showingCreateGoal = false
+
+    private var visibleGoals: [Goal] {
+        viewModel.goals.filter { $0.groupId == groupsViewModel.activeGroupId }
+    }
 
     var body: some View {
         NavigationStack {
@@ -12,7 +17,7 @@ struct GoalsView: View {
                         .font(.system(size: 24, weight: .bold))
                         .padding(.bottom, 8)
 
-                    ForEach(viewModel.goals) { goal in
+                    ForEach(visibleGoals) { goal in
                         GoalCardView(goal: goal)
                             .contextMenu {
                                 Button(role: .destructive) {

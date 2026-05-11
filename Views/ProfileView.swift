@@ -51,6 +51,8 @@ struct ProfileView: View {
                     statCards
 
                     breakdownRow
+
+                    myUploadsLink
                 }
                 .padding()
             }
@@ -80,6 +82,42 @@ struct ProfileView: View {
         .frame(maxWidth: .infinity)
         .background(AppColours.cardBackground)
         .clipShape(RoundedRectangle(cornerRadius: 16))
+    }
+
+    private var myUploadsLink: some View {
+        NavigationLink {
+            MyUploadsView()
+        } label: {
+            HStack(spacing: 12) {
+                Image(systemName: "photo.on.rectangle")
+                    .font(.headline)
+                    .foregroundStyle(.blue)
+                    .frame(width: 34, height: 34)
+                    .background(Color.blue.opacity(0.12))
+                    .clipShape(Circle())
+
+                VStack(alignment: .leading, spacing: 3) {
+                    Text("My Uploads")
+                        .font(.headline)
+                        .foregroundStyle(.primary)
+
+                    Text("View photos you've submitted as proof")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+
+                Spacer()
+
+                Image(systemName: "chevron.right")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(.secondary)
+            }
+            .padding(16)
+            .frame(maxWidth: .infinity)
+            .background(AppColours.cardBackground)
+            .clipShape(RoundedRectangle(cornerRadius: 16))
+        }
+        .buttonStyle(.plain)
     }
 
     private func breakdownItem(label: String, value: Int, tint: Color) -> some View {
