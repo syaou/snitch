@@ -51,7 +51,7 @@ struct ProofDetailView: View {
                     Label("Photo verified", systemImage: "checkmark")
                         .font(.subheadline)
                         .fontWeight(.medium)
-                        .foregroundStyle(Color.green.opacity(0.95))
+                        .foregroundStyle(AppColours.orange)
                         .padding(.horizontal, 14)
                         .padding(.vertical, 8)
                         .background(.white.opacity(0.95))
@@ -91,10 +91,10 @@ struct ProofDetailView: View {
             Text(post.status(votersCount: SampleData.votersCount).displayName)
                 .font(.subheadline)
                 .fontWeight(.semibold)
-                .foregroundStyle(.green)
+                .foregroundStyle(AppColours.orange)
                 .padding(.horizontal, 14)
                 .padding(.vertical, 8)
-                .background(Color.green.opacity(0.12))
+                .background(AppColours.orange.opacity(0.12))
                 .clipShape(Capsule())
         }
     }
@@ -175,12 +175,12 @@ struct ProofDetailView: View {
             HStack(spacing: 12) {
                 Image(systemName: "figure.run")
                     .font(.title3)
-                    .foregroundStyle(.green)
+                    .foregroundStyle(AppColours.orange)
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Verified via Strava")
                         .font(.headline)
-                        .foregroundStyle(Color.green.opacity(0.95))
+                        .foregroundStyle(AppColours.orange)
 
                     Text("5.1 km · 28:42 · 562 cal")
                         .font(.subheadline)
@@ -191,10 +191,10 @@ struct ProofDetailView: View {
 
                 Image(systemName: "checkmark")
                     .font(.headline)
-                    .foregroundStyle(.green)
+                    .foregroundStyle(AppColours.orange)
             }
             .padding(18)
-            .background(Color.green.opacity(0.12))
+            .background(AppColours.orange.opacity(0.12))
             .clipShape(RoundedRectangle(cornerRadius: 20))
         }
     }
@@ -206,10 +206,10 @@ struct ProofDetailView: View {
             } label: {
                 Text("Approve")
                     .font(.headline)
-                    .foregroundStyle(.green)
+                    .foregroundStyle(AppColours.orange)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 16)
-                    .background(Color.green.opacity(0.14))
+                    .background(AppColours.orange.opacity(0.14))
                     .clipShape(RoundedRectangle(cornerRadius: 16))
             }
             .buttonStyle(.plain)
@@ -299,7 +299,7 @@ private struct VerificationCheckRow: View {
     private var iconColor: Color {
         switch tone {
         case .success:
-            return .green
+            return AppColours.orange
         case .warning:
             return Color.orange.opacity(0.9)
         }
@@ -308,7 +308,7 @@ private struct VerificationCheckRow: View {
     private var iconBackground: Color {
         switch tone {
         case .success:
-            return Color.green.opacity(0.12)
+            return AppColours.orange.opacity(0.12)
         case .warning:
             return Color.orange.opacity(0.14)
         }

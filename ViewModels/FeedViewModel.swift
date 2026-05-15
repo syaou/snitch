@@ -59,22 +59,36 @@ final class FeedViewModel: ObservableObject {
         case .approved:
             users.update(post.userId) { profile in
                 profile.points += 10
-                profile.trust = min(100, profile.trust + 2)
                 profile.streak += 1
-            }
-            for vote in post.votes where vote.vote == .snitch {
-                users.update(vote.voterId) { profile in
-                    profile.trust = max(0, profile.trust - 3)
-                }
             }
         case .rejected:
             users.update(post.userId) { profile in
                 profile.points = max(0, profile.points - 5)
-                profile.trust = max(0, profile.trust - 5)
                 profile.streak = 0
+            }
+
+            let snitchVotes = post.votes
+                .filter { $0.vote == .snitch }
+                .sorted { $0.timestamp < $1.timestamp }
+
+            for (index, vote) in snitchVotes.enumerated() {
+                users.update(vote.voterId) { profile in
+                    profile.points += snitchReward(for: index)
+                }
             }
         case .pending:
             break
+        }
+    }
+
+    private func snitchReward(for index: Int) -> Int {
+        switch index {
+        case 0:
+            return 5
+        case 1:
+            return 3
+        default:
+            return 1
         }
     }
 }

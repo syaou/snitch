@@ -1,9 +1,11 @@
 import SwiftUI
 import PhotosUI
+import UIKit
 
 struct UploadProofView: View {
     @EnvironmentObject var feedViewModel: FeedViewModel
     @EnvironmentObject var goalsViewModel: GoalsViewModel
+    @EnvironmentObject var groupsViewModel: GroupsViewModel
 
     @State private var selectedItem: PhotosPickerItem?
     @State private var selectedImage: Image?
@@ -11,13 +13,29 @@ struct UploadProofView: View {
     @State private var selectedGoal: Goal?
     @State private var notes = ""
     @State private var showSuccessAlert = false
+    @State private var showingCamera = false
 
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 22) {
-                    Text("Upload Proof")
-                        .font(.system(size: 26, weight: .bold))
+                    VStack(alignment: .leading, spacing: 8) {
+                        HStack {
+                            VStack(alignment: .leading, spacing: 5) {
+                                Kicker(text: groupsViewModel.activeGroup?.name ?? "Active group")
+
+                                Text("Upload Proof")
+                                    .font(.system(size: 34, weight: .black))
+                                    .foregroundStyle(AppColours.ink)
+                            }
+
+                            Spacer()
+                        }
+
+                        Text("Add a photo, pick the goal, then send it for review.")
+                            .font(.caption.weight(.bold))
+                            .foregroundStyle(AppColours.muted)
+                    }
 
                     photoSection
                     goalSection
@@ -25,11 +43,21 @@ struct UploadProofView: View {
                     submitButton
                 }
                 .padding(.horizontal, 20)
-                .padding(.top, 20)
+                .padding(.top, 24)
                 .padding(.bottom, 90)
             }
-            .background(Color.white)
+            .background(AppColours.mustard)
             .navigationBarTitleDisplayMode(.inline)
+            .fullScreenCover(isPresented: $showingCamera) {
+                CameraPickerView { image in
+                    selectedImage = Image(uiImage: image)
+                    selectedImageData = image.jpegData(compressionQuality: 0.85)
+                    showingCamera = false
+                } onCancel: {
+                    showingCamera = false
+                }
+                .ignoresSafeArea()
+            }
             .onChange(of: selectedItem) {
                 Task {
                     if let data = try? await selectedItem?.loadTransferable(type: Data.self),
@@ -41,7 +69,7 @@ struct UploadProofView: View {
             }
             .onAppear {
                 if selectedGoal == nil {
-                    selectedGoal = goalsViewModel.goals.first
+                    selectedGoal = visibleGoals.first
                 }
             }
             .alert("Proof submitted!", isPresented: $showSuccessAlert) {
@@ -56,16 +84,17 @@ struct UploadProofView: View {
         VStack(alignment: .leading, spacing: 10) {
             Text("Photo Evidence")
                 .font(.subheadline)
-                .fontWeight(.medium)
+                .fontWeight(.black)
+                .foregroundStyle(AppColours.ink)
 
             PhotosPicker(selection: $selectedItem, matching: .images) {
                 ZStack {
                     RoundedRectangle(cornerRadius: 18)
-                        .fill(Color.blue.opacity(0.04))
+                        .fill(AppColours.cardBackground)
                         .overlay {
                             RoundedRectangle(cornerRadius: 18)
                                 .stroke(style: StrokeStyle(lineWidth: 1, dash: [6]))
-                                .foregroundStyle(Color.gray.opacity(0.35))
+                                .foregroundStyle(AppColours.ink.opacity(0.35))
                         }
                         .frame(height: 210)
 
@@ -74,18 +103,28 @@ struct UploadProofView: View {
                             .resizable()
                             .scaledToFill()
                             .frame(height: 210)
-                            .clipShape(RoundedRectangle(cornerRadius: 18))
+                            .clipShape(RoundedRectangle(cornerRadius: 4))
                     } else {
                         VStack(spacing: 10) {
                             Image(systemName: "camera")
                                 .font(.system(size: 34))
-                                .foregroundStyle(.gray)
+                                .foregroundStyle(AppColours.ink)
 
-                            Text("Tap to upload photo")
-                                .font(.subheadline)
-                                .foregroundStyle(.secondary)
+                        Text("Tap to upload photo")
+                            .font(.subheadline)
+                            .fontWeight(.bold)
+                            .foregroundStyle(AppColours.muted)
                         }
                     }
+                }
+            }
+            .stampCard(background: AppColours.cream, shadowOffset: 3)
+
+            if cameraAvailable {
+                AppButton(kind: .secondary) {
+                    showingCamera = true
+                } label: {
+                    Label("Take Photo", systemImage: "camera.fill")
                 }
             }
         }
@@ -95,27 +134,26 @@ struct UploadProofView: View {
         VStack(alignment: .leading, spacing: 10) {
             Text("Select Goal")
                 .font(.subheadline)
-                .fontWeight(.medium)
+                .fontWeight(.black)
+                .foregroundStyle(AppColours.ink)
 
-            if goalsViewModel.goals.isEmpty {
+            if visibleGoals.isEmpty {
                 Text("Add a goal first on the Goals tab")
                     .font(.subheadline)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(AppColours.muted)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding()
-                    .background(Color(.systemGray6))
-                    .clipShape(RoundedRectangle(cornerRadius: 14))
+                    .stampCard(background: AppColours.cream, shadowOffset: 2)
             } else {
                 Picker("Choose a goal", selection: $selectedGoal) {
-                    ForEach(goalsViewModel.goals) { goal in
+                    ForEach(visibleGoals) { goal in
                         Text(goal.title).tag(goal as Goal?)
                     }
                 }
                 .pickerStyle(.menu)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding()
-                .background(Color(.systemGray6))
-                .clipShape(RoundedRectangle(cornerRadius: 14))
+                .stampCard(background: AppColours.cream, shadowOffset: 2)
             }
         }
     }
@@ -124,30 +162,24 @@ struct UploadProofView: View {
         VStack(alignment: .leading, spacing: 10) {
             Text("Notes (Optional)")
                 .font(.subheadline)
-                .fontWeight(.medium)
+                .fontWeight(.black)
+                .foregroundStyle(AppColours.ink)
 
             TextField("Add any details about your progress...", text: $notes, axis: .vertical)
                 .lineLimit(4, reservesSpace: true)
                 .padding()
-                .background(Color(.systemGray6))
-                .clipShape(RoundedRectangle(cornerRadius: 14))
+                .stampCard(background: AppColours.cream, shadowOffset: 2)
         }
     }
 
     private var submitButton: some View {
-        Button {
+        AppButton(kind: .primary, disabled: !canSubmit) {
             submit()
         } label: {
             HStack {
                 Image(systemName: "square.and.arrow.up")
                 Text("Submit Proof")
             }
-            .font(.headline)
-            .foregroundStyle(.white)
-            .frame(maxWidth: .infinity)
-            .padding()
-            .background(canSubmit ? Color.black : Color.gray.opacity(0.45))
-            .clipShape(RoundedRectangle(cornerRadius: 14))
         }
         .disabled(!canSubmit)
         .padding(.top, 8)
@@ -155,6 +187,17 @@ struct UploadProofView: View {
 
     private var canSubmit: Bool {
         selectedImage != nil && selectedGoal != nil
+    }
+
+    private var cameraAvailable: Bool {
+        UIImagePickerController.isSourceTypeAvailable(.camera)
+    }
+
+    private var visibleGoals: [Goal] {
+        guard let activeGroupId = groupsViewModel.activeGroupId else {
+            return goalsViewModel.goals
+        }
+        return goalsViewModel.goals.filter { $0.groupId == activeGroupId }
     }
 
     private func submit() {
@@ -166,7 +209,7 @@ struct UploadProofView: View {
             userName: SampleData.profile.name,
             goalId: goal.id,
             goalTitle: goal.title,
-            groupId: SampleData.defaultGroup.id,
+            groupId: goal.groupId,
             iconName: "photo.fill",
             createdAt: Date(),
             photoData: selectedImageData,
@@ -178,7 +221,7 @@ struct UploadProofView: View {
         selectedItem = nil
         selectedImageData = nil
         notes = ""
-        selectedGoal = goalsViewModel.goals.first
+        selectedGoal = visibleGoals.first
         showSuccessAlert = true
     }
 }

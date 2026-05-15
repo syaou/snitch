@@ -67,13 +67,6 @@ struct ProofCardView: View {
                             Text("\(poster?.streak ?? 0)")
                         }
                         .font(.caption2.weight(.semibold))
-
-                        HStack(spacing: 3) {
-                            Image(systemName: "checkmark.shield.fill")
-                                .foregroundStyle(.green)
-                            Text("\(poster?.trust ?? 100)")
-                        }
-                        .font(.caption2.weight(.semibold))
                     }
 
                     Text(post.goalTitle)
@@ -95,7 +88,7 @@ struct ProofCardView: View {
                         .font(.caption)
                         .padding(.horizontal, 12)
                         .padding(.vertical, 6)
-                        .background(Color.green.opacity(0.15))
+                        .background(AppColours.orange.opacity(0.15))
                         .clipShape(Capsule())
 
                     Text("Snitch")
@@ -181,7 +174,7 @@ struct ProofCardView: View {
 
     private var backgroundColor: Color {
         currentStatus == .approved
-        ? Color.green.opacity(0.15)
+        ? AppColours.orange.opacity(0.15)
         : Color.blue.opacity(0.15)
     }
 

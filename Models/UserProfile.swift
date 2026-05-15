@@ -6,6 +6,5 @@ struct UserProfile: Identifiable, Codable {
     let bio: String
     var goalCount: Int
     var points: Int
-    var trust: Int = 100
     var streak: Int = 0
 }
