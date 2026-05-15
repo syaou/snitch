@@ -87,7 +87,10 @@ struct SnitchProofView: View {
 
     private var submitButton: some View {
         AppButton(kind: .snitch) {
-            feedViewModel.castVote(.snitch, by: SampleData.profile.id, on: post.id, users: usersViewModel, groups: groupsViewModel)
+            // feed view model returns the score changes
+            // users view model is what actually applies them
+            let changes = feedViewModel.castVote(.snitch, by: SampleData.profile.id, on: post.id, groups: groupsViewModel)
+            usersViewModel.apply(changes)
             dismiss()
         } label: {
             Label("Submit Snitch", systemImage: "flag.fill")

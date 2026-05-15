@@ -48,48 +48,64 @@ final class FeedViewModel: ObservableObject {
         posts[index] = post
     }
 
-    func castVote(_ vote: Vote, by voterId: UUID, on postId: UUID, users: UsersViewModel, groups: GroupsViewModel) {
-        guard let index = posts.firstIndex(where: { $0.id == postId }) else { return }
+    // records the vote and returns any score changes the caller should apply
+    // returns an empty list when the vote did not move the post out of pending
+    // the feed view model never touches the users view model directly
+    func castVote(_ vote: Vote, by voterId: UUID, on postId: UUID, groups: GroupsViewModel) -> [ScoreChange] {
+        guard let index = posts.firstIndex(where: { $0.id == postId }) else { return [] }
         let original = posts[index]
         let newVote = ProofVote(voterId: voterId, vote: vote, timestamp: Date())
         let updated = original.addingVote(newVote)
 
         // post comes back unchanged when the voter already had a vote
-        guard updated.votes.count != original.votes.count else { return }
+        guard updated.votes.count != original.votes.count else { return [] }
 
         let votersCount = groups.votersCount(for: updated)
         let before = original.status(votersCount: votersCount)
         let after = updated.status(votersCount: votersCount)
         posts[index] = updated
 
-        guard before == .pending, after != .pending else { return }
-        applyOutcome(post: updated, status: after, users: users)
+        guard before == .pending, after != .pending else { return [] }
+        return scoreChanges(for: updated, status: after)
     }
 
-    private func applyOutcome(post: ProofPost, status: ProofStatus, users: UsersViewModel) {
+    // pure function, builds the list of score changes for a settled post
+    // does not touch any view model, easy to test and easy to swap rules
+    private func scoreChanges(for post: ProofPost, status: ProofStatus) -> [ScoreChange] {
         switch status {
         case .approved:
-            users.update(post.userId) { profile in
-                profile.points += ScoringRules.approvedProofPoints
-                profile.streak += ScoringRules.streakIncreaseOnApproval
-            }
+            return [
+                ScoreChange(
+                    userId: post.userId,
+                    pointsDelta: ScoringRules.approvedProofPoints,
+                    streakChange: .increase(by: ScoringRules.streakIncreaseOnApproval)
+                )
+            ]
         case .rejected:
-            users.update(post.userId) { profile in
-                profile.points = max(0, profile.points - ScoringRules.rejectedProofPenalty)
-                profile.streak = ScoringRules.streakResetOnRejection
-            }
+            var changes: [ScoreChange] = [
+                ScoreChange(
+                    userId: post.userId,
+                    pointsDelta: -ScoringRules.rejectedProofPenalty,
+                    streakChange: .reset
+                )
+            ]
 
             let snitchVotes = post.votes
                 .filter { $0.vote == .snitch }
                 .sorted { $0.timestamp < $1.timestamp }
 
             for (index, vote) in snitchVotes.enumerated() {
-                users.update(vote.voterId) { profile in
-                    profile.points += ScoringRules.snitchReward(for: index)
-                }
+                changes.append(
+                    ScoreChange(
+                        userId: vote.voterId,
+                        pointsDelta: ScoringRules.snitchReward(for: index),
+                        streakChange: .unchanged
+                    )
+                )
             }
+            return changes
         case .pending:
-            break
+            return []
         }
     }
 }
