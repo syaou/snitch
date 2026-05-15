@@ -1,14 +1,17 @@
 import Foundation
 import Combine
 
+// owns the list of proof posts and the scoring rules
 @MainActor
 final class FeedViewModel: ObservableObject {
+    // scoring numbers in one place, easy to tweak without touching logic
     private enum ScoringRules {
         static let approvedProofPoints = 10
         static let rejectedProofPenalty = 5
         static let streakIncreaseOnApproval = 1
         static let streakResetOnRejection = 0
 
+        // first snitcher to a wrong proof gets the most, drops off after that
         static func snitchReward(for index: Int) -> Int {
             switch index {
             case 0:
@@ -36,14 +39,17 @@ final class FeedViewModel: ObservableObject {
         }
     }
 
+    // appends a new proof to the feed
     func add(_ post: ProofPost) {
         posts.append(post)
     }
 
+    // removes a proof by id, no-op if not found
     func delete(id: UUID) {
         posts.removeAll { $0.id == id }
     }
 
+    // replaces a proof with a new value, no-op if not found
     func update(_ post: ProofPost) {
         guard let index = posts.firstIndex(where: { $0.id == post.id }) else { return }
         posts[index] = post

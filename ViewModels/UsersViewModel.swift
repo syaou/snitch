@@ -1,6 +1,7 @@
 import Foundation
 import Combine
 
+// owns the list of user profiles, including points and streaks
 @MainActor
 final class UsersViewModel: ObservableObject {
     @Published private(set) var users: [UserProfile] {
@@ -18,10 +19,12 @@ final class UsersViewModel: ObservableObject {
         }
     }
 
+    // looks up a single user by id, nil if not found
     func user(id: UUID) -> UserProfile? {
         users.first { $0.id == id }
     }
 
+    // small mutator used by views that need to tweak a profile in place
     func update(_ id: UUID, _ change: (inout UserProfile) -> Void) {
         guard let index = users.firstIndex(where: { $0.id == id }) else { return }
         change(&users[index])

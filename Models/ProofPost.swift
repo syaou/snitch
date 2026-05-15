@@ -1,5 +1,6 @@
 import Foundation
 
+// a single proof post submitted to the feed for the group to vote on
 struct ProofPost: Identifiable, Codable, Hashable {
     var id: UUID = UUID()
     let userId: UUID
@@ -13,6 +14,7 @@ struct ProofPost: Identifiable, Codable, Hashable {
     var notes: String? = nil
     var votes: [ProofVote] = []
 
+    // works out approved or rejected once enough of the group has voted
     func status(votersCount: Int) -> ProofStatus {
         guard votersCount > 0 else { return .pending }
         let majority = votersCount / 2 + 1
@@ -23,6 +25,7 @@ struct ProofPost: Identifiable, Codable, Hashable {
         return .pending
     }
 
+    // human friendly stamp like "3h ago" used in the card header
     var timeAgo: String {
         let interval = Date().timeIntervalSince(createdAt)
         let minutes = Int(interval / 60)
