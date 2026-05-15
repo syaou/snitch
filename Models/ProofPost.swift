@@ -49,4 +49,16 @@ extension ProofPost {
         if trimmed.count > notesMaxLength { return .notesTooLong }
         return nil
     }
+
+    // returns a new post with the vote added
+    // if the voter has already voted, the same post comes back unchanged
+    // calling this twice in a row is safe and gives the same result
+    func addingVote(_ vote: ProofVote) -> ProofPost {
+        guard !votes.contains(where: { $0.voterId == vote.voterId }) else {
+            return self
+        }
+        var copy = self
+        copy.votes.append(vote)
+        return copy
+    }
 }

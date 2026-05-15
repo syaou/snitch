@@ -50,17 +50,20 @@ final class FeedViewModel: ObservableObject {
 
     func castVote(_ vote: Vote, by voterId: UUID, on postId: UUID, users: UsersViewModel, groups: GroupsViewModel) {
         guard let index = posts.firstIndex(where: { $0.id == postId }) else { return }
-        var post = posts[index]
-        guard !post.votes.contains(where: { $0.voterId == voterId }) else { return }
+        let original = posts[index]
+        let newVote = ProofVote(voterId: voterId, vote: vote, timestamp: Date())
+        let updated = original.addingVote(newVote)
 
-        let votersCount = groups.votersCount(for: post)
-        let before = post.status(votersCount: votersCount)
-        post.votes.append(ProofVote(voterId: voterId, vote: vote, timestamp: Date()))
-        let after = post.status(votersCount: votersCount)
-        posts[index] = post
+        // post comes back unchanged when the voter already had a vote
+        guard updated.votes.count != original.votes.count else { return }
+
+        let votersCount = groups.votersCount(for: updated)
+        let before = original.status(votersCount: votersCount)
+        let after = updated.status(votersCount: votersCount)
+        posts[index] = updated
 
         guard before == .pending, after != .pending else { return }
-        applyOutcome(post: post, status: after, users: users)
+        applyOutcome(post: updated, status: after, users: users)
     }
 
     private func applyOutcome(post: ProofPost, status: ProofStatus, users: UsersViewModel) {
