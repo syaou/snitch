@@ -90,10 +90,10 @@ struct FriendsView: View {
                                     Text("Approve")
                                         .font(.subheadline)
                                         .fontWeight(.semibold)
-                                        .foregroundStyle(.green)
+                                        .foregroundStyle(AppColours.orange)
                                         .frame(maxWidth: .infinity)
                                         .padding(.vertical, 12)
-                                        .background(Color.green.opacity(0.12))
+                                        .background(AppColours.orange.opacity(0.12))
                                         .clipShape(RoundedRectangle(cornerRadius: 14))
                                 }
                                 .buttonStyle(.plain)
@@ -131,7 +131,7 @@ struct FriendsView: View {
             VStack(spacing: 12) {
                 ForEach(filteredSuggestions) { suggestion in
                     HStack(spacing: 12) {
-                        avatar(for: suggestion.name, color: .green)
+                        avatar(for: suggestion.name, color: AppColours.orange)
 
                         VStack(alignment: .leading, spacing: 4) {
                             Text(suggestion.name)

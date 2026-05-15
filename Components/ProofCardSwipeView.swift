@@ -82,7 +82,7 @@ struct ProofCardSwipeView: View {
                     Rectangle()
                         .fill(AppColours.mustard.opacity(0.6))
 
-                    Image(systemName: post.iconName)
+                    Image(systemName: "photo.on.rectangle.angled")
                         .font(.system(size: 70))
                         .foregroundStyle(AppColours.ink.opacity(0.45))
                 }

@@ -51,34 +51,11 @@ struct CardStackView: View {
                         .rotationEffect(isTop && horizontalDominant ? .degrees(Double(dragOffset.width / 18)) : .zero)
                         .opacity(isTop ? 1 : 0.7)
                         .gesture(isTop ? dragGesture(for: post) : nil)
-                        .overlay(alignment: .top) {
-                            if isTop {
-                                voteBadges
-                                    .padding(.top, 24)
-                            }
-                        }
                         .zIndex(Double(queue.count - index))
                 }
             }
         }
         .frame(maxWidth: .infinity)
-    }
-
-    private var voteBadges: some View {
-        ZStack {
-            HStack {
-                StampPill(tone: .approved, label: "approve")
-                    .rotationEffect(.degrees(-8))
-                    .opacity(horizontalDominant && dragOffset.width > 30 ? min(dragOffset.width / 100, 1) : 0)
-
-                Spacer()
-
-                StampPill(tone: .snitched, label: "snitch")
-                    .rotationEffect(.degrees(8))
-                    .opacity(horizontalDominant && dragOffset.width < -30 ? min(-dragOffset.width / 100, 1) : 0)
-            }
-            .padding(.horizontal, 20)
-        }
     }
 
     private var swipeHint: some View {

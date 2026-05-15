@@ -15,11 +15,11 @@ enum AppColours {
     static let cream = Color(hex: 0xFFF5D4)
     static let paper = Color(hex: 0xFFFFFF)
     static let orange = Color(hex: 0xFF7A4D)
-    static let acid = Color(hex: 0xBFF04A)
+    static let acid = Color(hex: 0xFFB347)
     static let ink = Color(hex: 0x1F1408)
     static let muted = Color(hex: 0x5B5346)
     static let ringIdle = Color(hex: 0xE5DCC2)
-    static let approved = Color(hex: 0xBFF04A)
+    static let approved = orange
     static let snitched = Color(hex: 0xA51B18)
     static let danger = Color(hex: 0xA51B18)
     static let hairline = ink.opacity(0.16)
@@ -32,13 +32,13 @@ enum AppColours {
     static let yellow = mustard
     static let paleYellow = cream
     static let line = divider
-    static let success = approved
+    static let success = orange
     static let warning = orange
 
     static let accentPalette: [Color] = [
         mustard,
         orange,
-        acid,
+        cream,
         cream
     ]
 

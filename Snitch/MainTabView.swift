@@ -14,13 +14,13 @@ struct MainTabView: View {
         appearance.backgroundColor = UIColor(AppColours.ink)
         appearance.shadowColor = .clear
 
-        appearance.stackedLayoutAppearance.normal.iconColor = UIColor.white.withAlphaComponent(0.55)
+        appearance.stackedLayoutAppearance.normal.iconColor = UIColor(AppColours.orange).withAlphaComponent(0.65)
         appearance.stackedLayoutAppearance.normal.titleTextAttributes = [
-            .foregroundColor: UIColor.white.withAlphaComponent(0.55)
+            .foregroundColor: UIColor(AppColours.orange).withAlphaComponent(0.65)
         ]
-        appearance.stackedLayoutAppearance.selected.iconColor = UIColor(AppColours.yellow)
+        appearance.stackedLayoutAppearance.selected.iconColor = UIColor(AppColours.orange)
         appearance.stackedLayoutAppearance.selected.titleTextAttributes = [
-            .foregroundColor: UIColor(AppColours.yellow)
+            .foregroundColor: UIColor(AppColours.orange)
         ]
 
         UITabBar.appearance().standardAppearance = appearance
