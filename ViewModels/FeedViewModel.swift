@@ -48,15 +48,6 @@ final class FeedViewModel: ObservableObject {
         posts[index] = post
     }
 
-    func addComment(to postId: UUID, text: String, by userName: String) {
-        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmed.isEmpty else { return }
-        guard let index = posts.firstIndex(where: { $0.id == postId }) else { return }
-        var post = posts[index]
-        post.comments.append(Comment(userName: userName, text: trimmed, createdAt: Date()))
-        posts[index] = post
-    }
-
     func castVote(_ vote: Vote, by voterId: UUID, on postId: UUID, users: UsersViewModel, groups: GroupsViewModel) {
         guard let index = posts.firstIndex(where: { $0.id == postId }) else { return }
         var post = posts[index]

@@ -5,7 +5,7 @@ import Foundation
 // come from real user-created data or a backend service.
 enum SampleData {
 
-    // MARK: - USERS
+    // users
 
     static let sana  = UserProfile(name: "Sana Yousefi", bio: "Building better habits one step at a time.", goalCount: 5, points: 142, streak: 8)
     static let alex  = UserProfile(name: "Alex Johnson", bio: "Runner, lifter, snitch master.",             goalCount: 4, points: 128, streak: 6)
@@ -18,7 +18,7 @@ enum SampleData {
     static let users: [UserProfile] = [sana, alex, sarah, mike, priya, omar, mia]
     static let profile = sana
 
-    // MARK: - GROUP
+    // groups
 
     static let defaultGroup = SnitchGroup(
         name: "My Friends",
@@ -51,10 +51,10 @@ enum SampleData {
         wellnessGroup
     ]
 
-    /// Number of friends who could vote on a post (everyone except the poster).
+    // friends who could vote on a post (everyone except the poster)
     static var votersCount: Int { defaultGroup.memberIds.count - 1 }
 
-    // MARK: - GOALS
+    // goals
 
     static let gymGoal = Goal(
         title: "Go to gym 3x a week",
@@ -179,7 +179,7 @@ enum SampleData {
         focusGoal
     ]
 
-    // MARK: - POSTS
+    // posts
 
     static let posts: [ProofPost] = [
         ProofPost(
@@ -191,10 +191,6 @@ enum SampleData {
             votes: [
                 ProofVote(voterId: sarah.id, vote: .approve, timestamp: Date().addingTimeInterval(-90 * 60)),
                 ProofVote(voterId: mike.id, vote: .approve, timestamp: Date().addingTimeInterval(-70 * 60))
-            ],
-            comments: [
-                Comment(userName: "Sana", text: "Solid run", createdAt: Date().addingTimeInterval(-80 * 60)),
-                Comment(userName: "Mike", text: "Keep pushing", createdAt: Date().addingTimeInterval(-65 * 60))
             ]
         ),
 
@@ -209,11 +205,7 @@ enum SampleData {
                 ProofVote(voterId: alex.id, vote: .approve, timestamp: Date().addingTimeInterval(-3 * 3600)),
                 ProofVote(voterId: mike.id, vote: .approve, timestamp: Date().addingTimeInterval(-2 * 3600)),
                 ProofVote(voterId: omar.id, vote: .approve, timestamp: Date().addingTimeInterval(-90 * 60))
-            ],
-            comments: [
-                Comment(userName: "Alex", text: "Nice consistency", createdAt: Date().addingTimeInterval(-3 * 3600))
-            ],
-            isLiked: true
+            ]
         ),
 
         ProofPost(
@@ -221,11 +213,7 @@ enum SampleData {
             goalId: gymGoal.id, goalTitle: "Gym Session · Chest Day",
             groupId: defaultGroup.id,
             iconName: "dumbbell",
-            createdAt: Date().addingTimeInterval(-1 * 3600),
-            comments: [
-                Comment(userName: "Sana", text: "Heavy day", createdAt: Date().addingTimeInterval(-40 * 60)),
-                Comment(userName: "Alex", text: "Respect", createdAt: Date().addingTimeInterval(-35 * 60))
-            ]
+            createdAt: Date().addingTimeInterval(-1 * 3600)
         ),
 
         ProofPost(
@@ -238,11 +226,7 @@ enum SampleData {
             votes: [
                 ProofVote(voterId: sarah.id, vote: .approve, timestamp: Date().addingTimeInterval(-2 * 3600)),
                 ProofVote(voterId: alex.id, vote: .approve, timestamp: Date().addingTimeInterval(-95 * 60))
-            ],
-            comments: [
-                Comment(userName: "Priya", text: "Evening walks count", createdAt: Date().addingTimeInterval(-90 * 60))
-            ],
-            isLiked: true
+            ]
         ),
 
         ProofPost(
@@ -280,9 +264,6 @@ enum SampleData {
             notes: "Three containers ready for uni days.",
             votes: [
                 ProofVote(voterId: sarah.id, vote: .approve, timestamp: Date().addingTimeInterval(-45 * 60))
-            ],
-            comments: [
-                Comment(userName: "Mia", text: "That looks organised", createdAt: Date().addingTimeInterval(-35 * 60))
             ]
         ),
 
@@ -304,9 +285,6 @@ enum SampleData {
             createdAt: Date().addingTimeInterval(-4 * 3600),
             votes: [
                 ProofVote(voterId: priya.id, vote: .approve, timestamp: Date().addingTimeInterval(-3 * 3600))
-            ],
-            comments: [
-                Comment(userName: "Sana", text: "This is making me book a class", createdAt: Date().addingTimeInterval(-2 * 3600))
             ]
         ),
 
@@ -320,9 +298,6 @@ enum SampleData {
             votes: [
                 ProofVote(voterId: alex.id, vote: .snitch, timestamp: Date().addingTimeInterval(-29 * 3600)),
                 ProofVote(voterId: mia.id, vote: .snitch, timestamp: Date().addingTimeInterval(-28 * 3600))
-            ],
-            comments: [
-                Comment(userName: "Alex", text: "I need the macros on this one", createdAt: Date().addingTimeInterval(-29 * 3600))
             ]
         ),
 
@@ -337,9 +312,6 @@ enum SampleData {
                 ProofVote(voterId: sarah.id, vote: .snitch, timestamp: Date().addingTimeInterval(-46 * 3600)),
                 ProofVote(voterId: mike.id, vote: .snitch, timestamp: Date().addingTimeInterval(-45 * 3600)),
                 ProofVote(voterId: priya.id, vote: .snitch, timestamp: Date().addingTimeInterval(-44 * 3600))
-            ],
-            comments: [
-                Comment(userName: "Sarah", text: "This was definitely yesterday's photo", createdAt: Date().addingTimeInterval(-45 * 3600))
             ]
         ),
 

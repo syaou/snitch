@@ -12,8 +12,6 @@ struct ProofPost: Identifiable, Codable, Hashable {
     var photoData: Data? = nil
     var notes: String? = nil
     var votes: [ProofVote] = []
-    var comments: [Comment] = []
-    var isLiked: Bool = false
 
     func status(votersCount: Int) -> ProofStatus {
         guard votersCount > 0 else { return .pending }
