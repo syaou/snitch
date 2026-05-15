@@ -3,6 +3,12 @@ import Combine
 
 @MainActor
 final class GroupsViewModel: ObservableObject {
+    enum ValidationError: String, Error {
+        case nameEmpty = "Group name can't be empty"
+        case nameTooLong = "Group name must be 40 characters or fewer"
+        case duplicateName = "You already have a group with this name"
+    }
+
     @Published private(set) var groups: [SnitchGroup] {
         didSet {
             Persistence.save(groups, forKey: PersistenceKeys.groups)
@@ -35,9 +41,28 @@ final class GroupsViewModel: ObservableObject {
         groups.append(group)
     }
 
+    func validateGroupName(_ name: String) -> ValidationError? {
+        let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        if trimmed.isEmpty { return .nameEmpty }
+        if trimmed.count > 40 { return .nameTooLong }
+        if groups.contains(where: { $0.name.caseInsensitiveCompare(trimmed) == .orderedSame }) {
+            return .duplicateName
+        }
+        return nil
+    }
+
     func setActive(_ id: UUID) {
         guard groups.contains(where: { $0.id == id }) else { return }
         activeGroupId = id
+    }
+
+    func votersCount(for post: ProofPost) -> Int {
+        guard let groupId = post.groupId,
+              let group = groups.first(where: { $0.id == groupId }) else {
+            return 0
+        }
+
+        return group.memberIds.filter { $0 != post.userId }.count
     }
 
     func leave(_ id: UUID) {

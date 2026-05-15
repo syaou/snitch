@@ -6,6 +6,7 @@ struct CreateGroupView: View {
 
     @State private var name = ""
     @State private var navigateToInvite = false
+    @State private var nameError: GroupsViewModel.ValidationError?
 
     private var trimmedName: String {
         name.trimmingCharacters(in: .whitespaces)
@@ -44,23 +45,32 @@ struct CreateGroupView: View {
                             .font(.caption.weight(.black))
                             .foregroundStyle(AppColours.ink)
 
-                    TextField("e.g. Gym Squad", text: $name)
+                        TextField("e.g. Gym Squad", text: $name)
                             .textFieldStyle(.plain)
                             .font(.headline)
                             .padding(14)
                             .stampCard(background: AppColours.cream, shadowOffset: 2)
+                            .onChange(of: name) { _, newValue in
+                                nameError = groupsViewModel.validateGroupName(newValue)
+                            }
+
+                        if let nameError {
+                            Text(nameError.rawValue)
+                                .font(.caption.weight(.bold))
+                                .foregroundStyle(AppColours.warning)
+                        }
 
                         Text("You can share an invite link after the group is created.")
                             .font(.caption.weight(.bold))
                             .foregroundStyle(AppColours.muted)
                     }
 
-                    AppButton(kind: .primary, disabled: trimmedName.isEmpty) {
+                    AppButton(kind: .primary, disabled: !canCreate) {
                         create()
                     } label: {
                         Label("Create Group", systemImage: "plus.circle.fill")
                     }
-                    .disabled(trimmedName.isEmpty)
+                    .disabled(!canCreate)
                 }
                 .padding(.horizontal, 20)
                 .padding(.vertical, 20)
@@ -84,8 +94,13 @@ struct CreateGroupView: View {
         }
     }
 
+    private var canCreate: Bool {
+        groupsViewModel.validateGroupName(name) == nil
+    }
+
     private func create() {
-        guard !trimmedName.isEmpty else { return }
+        nameError = groupsViewModel.validateGroupName(name)
+        guard canCreate else { return }
         let group = SnitchGroup(
             name: trimmedName,
             memberIds: [SampleData.profile.id]

@@ -3,6 +3,24 @@ import Combine
 
 @MainActor
 final class FeedViewModel: ObservableObject {
+    private enum ScoringRules {
+        static let approvedProofPoints = 10
+        static let rejectedProofPenalty = 5
+        static let streakIncreaseOnApproval = 1
+        static let streakResetOnRejection = 0
+
+        static func snitchReward(for index: Int) -> Int {
+            switch index {
+            case 0:
+                return 5
+            case 1:
+                return 3
+            default:
+                return 1
+            }
+        }
+    }
+
     @Published private(set) var posts: [ProofPost] {
         didSet {
             Persistence.save(posts, forKey: PersistenceKeys.posts)
@@ -39,12 +57,12 @@ final class FeedViewModel: ObservableObject {
         posts[index] = post
     }
 
-    func castVote(_ vote: Vote, by voterId: UUID, on postId: UUID, users: UsersViewModel) {
+    func castVote(_ vote: Vote, by voterId: UUID, on postId: UUID, users: UsersViewModel, groups: GroupsViewModel) {
         guard let index = posts.firstIndex(where: { $0.id == postId }) else { return }
         var post = posts[index]
         guard !post.votes.contains(where: { $0.voterId == voterId }) else { return }
 
-        let votersCount = SampleData.votersCount
+        let votersCount = groups.votersCount(for: post)
         let before = post.status(votersCount: votersCount)
         post.votes.append(ProofVote(voterId: voterId, vote: vote, timestamp: Date()))
         let after = post.status(votersCount: votersCount)
@@ -58,13 +76,13 @@ final class FeedViewModel: ObservableObject {
         switch status {
         case .approved:
             users.update(post.userId) { profile in
-                profile.points += 10
-                profile.streak += 1
+                profile.points += ScoringRules.approvedProofPoints
+                profile.streak += ScoringRules.streakIncreaseOnApproval
             }
         case .rejected:
             users.update(post.userId) { profile in
-                profile.points = max(0, profile.points - 5)
-                profile.streak = 0
+                profile.points = max(0, profile.points - ScoringRules.rejectedProofPenalty)
+                profile.streak = ScoringRules.streakResetOnRejection
             }
 
             let snitchVotes = post.votes
@@ -73,22 +91,11 @@ final class FeedViewModel: ObservableObject {
 
             for (index, vote) in snitchVotes.enumerated() {
                 users.update(vote.voterId) { profile in
-                    profile.points += snitchReward(for: index)
+                    profile.points += ScoringRules.snitchReward(for: index)
                 }
             }
         case .pending:
             break
-        }
-    }
-
-    private func snitchReward(for index: Int) -> Int {
-        switch index {
-        case 0:
-            return 5
-        case 1:
-            return 3
-        default:
-            return 1
         }
     }
 }

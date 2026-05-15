@@ -3,6 +3,7 @@ import SwiftUI
 
 struct MyUploadsView: View {
     @EnvironmentObject var feedViewModel: FeedViewModel
+    @EnvironmentObject var groupsViewModel: GroupsViewModel
 
     private var myUploads: [ProofPost] {
         feedViewModel.posts
@@ -62,10 +63,11 @@ struct MyUploadsView: View {
 }
 
 private struct MyUploadRowView: View {
+    @EnvironmentObject var groupsViewModel: GroupsViewModel
     let post: ProofPost
 
     private var status: ProofStatus {
-        post.status(votersCount: SampleData.votersCount)
+        post.status(votersCount: groupsViewModel.votersCount(for: post))
     }
 
     private var approveCount: Int {

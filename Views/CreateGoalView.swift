@@ -13,6 +13,8 @@ struct CreateGoalView: View {
     @State private var durationDays = 30
     @State private var titleError: Goal.ValidationError?
     @State private var descriptionError: Goal.ValidationError?
+    @State private var targetError: Goal.ValidationError?
+    @State private var durationError: Goal.ValidationError?
 
     var body: some View {
         NavigationStack {
@@ -66,6 +68,15 @@ struct CreateGoalView: View {
                         Stepper(value: $targetCount, in: 1...99) {
                             scheduleRow(icon: "number", title: "Target", value: "\(targetCount)x")
                         }
+                        .onChange(of: targetCount) { _, newValue in
+                            targetError = Goal.validateTarget(newValue)
+                        }
+
+                        if let error = targetError {
+                            Text(error.rawValue)
+                                .font(.caption.weight(.bold))
+                                .foregroundStyle(AppColours.warning)
+                        }
 
                         Picker("Frequency", selection: $frequency) {
                             ForEach(GoalFrequency.allCases) { option in
@@ -76,6 +87,15 @@ struct CreateGoalView: View {
 
                         Stepper(value: $durationDays, in: 1...365) {
                             scheduleRow(icon: "clock.fill", title: "Duration", value: "\(durationDays) days")
+                        }
+                        .onChange(of: durationDays) { _, newValue in
+                            durationError = Goal.validateDuration(newValue)
+                        }
+
+                        if let error = durationError {
+                            Text(error.rawValue)
+                                .font(.caption.weight(.bold))
+                                .foregroundStyle(AppColours.warning)
                         }
                     }
                     .padding(16)
@@ -184,12 +204,16 @@ struct CreateGoalView: View {
     private var isValid: Bool {
         Goal.validateTitle(title) == nil
             && Goal.validateDescription(description) == nil
+            && Goal.validateTarget(targetCount) == nil
+            && Goal.validateDuration(durationDays) == nil
             && selectedGroupId != nil
     }
 
     private func save() {
         titleError = Goal.validateTitle(title)
         descriptionError = Goal.validateDescription(description)
+        targetError = Goal.validateTarget(targetCount)
+        durationError = Goal.validateDuration(durationDays)
         guard isValid, let selectedGroupId else { return }
 
         let goal = Goal(

@@ -1,5 +1,8 @@
 import Foundation
 
+// Demo data used to populate the app for testing and presentation purposes.
+// In a production version, these users, groups, goals, and proof posts would
+// come from real user-created data or a backend service.
 enum SampleData {
 
     // MARK: - USERS
