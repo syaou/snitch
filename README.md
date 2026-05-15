@@ -6,7 +6,7 @@ An accountability app for friends.
 
 ## What is Snitch?
 
-Snitch is a fun and interactive app which is aimed at keeping you and your friends on track with your goals! The goals can be anything, from gym, study, sleep, screen time or whatever you have set out to complete for yourself. You set a goal, post a photo as proof you did it, and your friends can cheer you on, leave a comment, or call you out by flagging proof that looks dodgy. A leaderboard shows who is staying the most consistent as motivation
+Snitch is a fun and interactive app which is aimed at keeping you and your friends on track with your goals! The goals can be anything, from gym, study, sleep, screen time or whatever you have set out to complete for yourself. You set a goal, post a photo as proof you did it, and your friends can swipe to approve it or call you out by snitching on proof that looks dodgy. A leaderboard shows who is staying the most consistent as motivation.
 
 ## The problem we are solving
 
@@ -32,8 +32,8 @@ Goals + photo proof + friend group + leaderboard + flagging + more
 - Upload a photo as proof you completed a goal
 - Friends list (sample data for now, no backend)
 - Feed of recent proof posts from your friends
-- Comment on a friend's proof
-- Flag a proof that looks dishonest
+- Swipe right to approve a proof, swipe left to snitch on it
+- Group vote decides whether a proof is approved or rejected
 - Leaderboard ranking friends by consistency
 - Profile screen with your stats
 
@@ -47,9 +47,8 @@ This is a beginner subject so we have chosen frameworks that are achievable in t
 | --- | --- |
 | **SwiftUI** | The whole user interface, navigation and layout |
 | **PhotosUI** | Letting users pick a proof photo from their library using `PhotosPicker` |
-| **UserNotifications** | Local reminders, for example "post your proof by 8 pm tonight" |
-| **SwiftData** | Saving goals and proof posts so they survive closing the app |
-| **UserDefaults** | Small per user settings such as display name and current streak |
+| **UIKit** | `UIImagePickerController` for the camera capture flow |
+| **UserDefaults** | Saving goals, proof posts, groups and user profiles between launches via JSON encoding |
 | **Combine** (light usage) | Powering `@Published` view model updates so the UI refreshes automatically |
 
 We deliberately avoided things that need a backend server (CloudKit, Firebase, real friend syncing) because the brief says no backend is required and they would not be realistic to build in a beginner subject.
@@ -61,11 +60,11 @@ Snitch follows the **MVVM** pattern (Model, View, ViewModel). Each folder has a 
 ```
 Snitch/
 ├── Snitch/             App entry point and main tab navigation
-├── Models/             Plain data types (Goal, ProofPost, UserProfile, Comment, LeaderboardUser)
+├── Models/             Plain data types (Goal, ProofPost, SnitchGroup, UserProfile, ProofVote, ScoreChange, plus status enums)
 ├── ViewModels/         The logic layer that prepares data for each screen
 ├── Views/              The screens (Feed, Goals, Leaderboard, Profile, Upload Proof, etc.)
 ├── Components/         Small reusable UI pieces (cards, rows)
-├── Helpers/            Shared bits (colours, sample data)
+├── Helpers/            Shared bits (colours, sample data, persistence)
 └── Snitch.xcodeproj/   The Xcode project file
 ```
 
@@ -73,7 +72,7 @@ The point of MVVM is that each screen does not have to know how the data is stor
 
 ## How to run the app
 
-1. Make sure you have **Xcode 15 or later** installed (needed for SwiftData).
+1. Make sure you have **Xcode 26 or later** installed.
 2. Clone the repo:
    ```
    git clone https://github.com/syaou/snitch.git
@@ -94,4 +93,4 @@ Assessment: Group Project (Assessment Task 3).
 
 ## Project status
 
-This is a work in progress. Sana built the initial UI structure (tabs, feed, goals, leaderboard, profile, upload, friends, flagging, comments). Natalie is working on repository setup, persistence with SwiftData, and notifications. More features and polish to follow as we iterate towards the final demo. 
+Sana built the initial UI structure (tabs, feed, goals, leaderboard, profile, upload, friends, flagging) and refined the scoring system. Natalie set up the repository, persistence using UserDefaults with JSON, the swipe to vote interaction on the feed, the groups feature, and a code cleanup pass for the final demo.

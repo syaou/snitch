@@ -12,6 +12,7 @@ struct UploadProofView: View {
     @State private var selectedImageData: Data?
     @State private var selectedGoal: Goal?
     @State private var notes = ""
+    @State private var notesError: ProofPost.ValidationError?
     @State private var showSuccessAlert = false
     @State private var showingCamera = false
     @State private var validationMessage: String?
@@ -182,6 +183,13 @@ struct UploadProofView: View {
                 .lineLimit(4, reservesSpace: true)
                 .padding()
                 .stampCard(background: AppColours.cream, shadowOffset: 2)
+                .onChange(of: notes) { _, newValue in
+                    notesError = ProofPost.validateNotes(newValue)
+                }
+
+            if let notesError {
+                validationText(notesError.rawValue)
+            }
         }
     }
 
@@ -206,6 +214,7 @@ struct UploadProofView: View {
 
     private var canSubmit: Bool {
         guard selectedImageData != nil, let selectedGoal else { return false }
+        guard notesError == nil else { return false }
         return visibleGoals.contains { $0.id == selectedGoal.id }
     }
 

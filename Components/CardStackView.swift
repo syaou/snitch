@@ -128,7 +128,10 @@ struct CardStackView: View {
             dragOffset = CGSize(width: 700, height: 0)
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-            viewModel.castVote(.approve, by: SampleData.profile.id, on: post.id, users: usersViewModel, groups: groupsViewModel)
+            // feed view model returns the score changes
+            // users view model is what actually applies them
+            let changes = viewModel.castVote(.approve, by: SampleData.profile.id, on: post.id, groups: groupsViewModel)
+            usersViewModel.apply(changes)
             dragOffset = .zero
         }
     }

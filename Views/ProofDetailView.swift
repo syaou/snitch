@@ -203,7 +203,10 @@ struct ProofDetailView: View {
     private var actionSection: some View {
         HStack(spacing: 12) {
             Button {
-                feedViewModel.castVote(.approve, by: SampleData.profile.id, on: post.id, users: usersViewModel, groups: groupsViewModel)
+                // feed view model returns the score changes
+                // users view model is what actually applies them
+                let changes = feedViewModel.castVote(.approve, by: SampleData.profile.id, on: post.id, groups: groupsViewModel)
+                usersViewModel.apply(changes)
             } label: {
                 Text("Approve")
                     .font(.headline)
