@@ -14,6 +14,7 @@ struct UploadProofView: View {
     @State private var notes = ""
     @State private var showSuccessAlert = false
     @State private var showingCamera = false
+    @State private var validationMessage: String?
 
     var body: some View {
         NavigationStack {
@@ -64,13 +65,17 @@ struct UploadProofView: View {
                        let uiImage = UIImage(data: data) {
                         selectedImage = Image(uiImage: uiImage)
                         selectedImageData = data
+                        validationMessage = nil
+                    } else if selectedItem != nil {
+                        validationMessage = "That photo couldn't be loaded. Try a different image."
                     }
                 }
             }
             .onAppear {
-                if selectedGoal == nil {
-                    selectedGoal = visibleGoals.first
-                }
+                refreshSelectedGoal()
+            }
+            .onChange(of: groupsViewModel.activeGroupId) {
+                refreshSelectedGoal()
             }
             .alert("Proof submitted!", isPresented: $showSuccessAlert) {
                 Button("OK", role: .cancel) {}
@@ -127,6 +132,10 @@ struct UploadProofView: View {
                     Label("Take Photo", systemImage: "camera.fill")
                 }
             }
+
+            if selectedImage == nil, let validationMessage {
+                validationText(validationMessage)
+            }
         }
     }
 
@@ -155,6 +164,10 @@ struct UploadProofView: View {
                 .padding()
                 .stampCard(background: AppColours.cream, shadowOffset: 2)
             }
+
+            if selectedGoal == nil, let validationMessage {
+                validationText(validationMessage)
+            }
         }
     }
 
@@ -173,20 +186,27 @@ struct UploadProofView: View {
     }
 
     private var submitButton: some View {
-        AppButton(kind: .primary, disabled: !canSubmit) {
-            submit()
-        } label: {
-            HStack {
-                Image(systemName: "square.and.arrow.up")
-                Text("Submit Proof")
+        VStack(alignment: .leading, spacing: 8) {
+            AppButton(kind: .primary, disabled: !canSubmit) {
+                submit()
+            } label: {
+                HStack {
+                    Image(systemName: "square.and.arrow.up")
+                    Text("Submit Proof")
+                }
+            }
+            .disabled(!canSubmit)
+
+            if let message = validationMessage ?? proofValidationMessage {
+                validationText(message)
             }
         }
-        .disabled(!canSubmit)
         .padding(.top, 8)
     }
 
     private var canSubmit: Bool {
-        selectedImage != nil && selectedGoal != nil
+        guard selectedImageData != nil, let selectedGoal else { return false }
+        return visibleGoals.contains { $0.id == selectedGoal.id }
     }
 
     private var cameraAvailable: Bool {
@@ -201,7 +221,10 @@ struct UploadProofView: View {
     }
 
     private func submit() {
-        guard let goal = selectedGoal else { return }
+        validationMessage = proofValidationMessage
+        guard validationMessage == nil,
+              let goal = selectedGoal,
+              let proofImageData = selectedImageData else { return }
 
         let trimmedNotes = notes.trimmingCharacters(in: .whitespacesAndNewlines)
         let post = ProofPost(
@@ -212,7 +235,7 @@ struct UploadProofView: View {
             groupId: goal.groupId,
             iconName: "photo.fill",
             createdAt: Date(),
-            photoData: selectedImageData,
+            photoData: proofImageData,
             notes: trimmedNotes.isEmpty ? nil : trimmedNotes
         )
         feedViewModel.add(post)
@@ -223,5 +246,35 @@ struct UploadProofView: View {
         notes = ""
         selectedGoal = visibleGoals.first
         showSuccessAlert = true
+    }
+
+    private var proofValidationMessage: String? {
+        if visibleGoals.isEmpty {
+            return "Add a goal before uploading proof."
+        }
+        if selectedGoal == nil {
+            return "Choose which goal this proof belongs to."
+        }
+        if selectedImageData == nil {
+            return "Add a photo before submitting proof."
+        }
+        if let selectedGoal, !visibleGoals.contains(where: { $0.id == selectedGoal.id }) {
+            return "That goal is no longer in the active group. Pick another goal."
+        }
+        return nil
+    }
+
+    private func refreshSelectedGoal() {
+        if let selectedGoal,
+           visibleGoals.contains(where: { $0.id == selectedGoal.id }) {
+            return
+        }
+        selectedGoal = visibleGoals.first
+    }
+
+    private func validationText(_ message: String) -> some View {
+        Text(message)
+            .font(.caption.weight(.bold))
+            .foregroundStyle(AppColours.warning)
     }
 }

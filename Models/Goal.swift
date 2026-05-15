@@ -99,6 +99,8 @@ extension Goal {
         case titleTooLong       = "Title must be 80 characters or fewer"
         case descriptionEmpty   = "Description can't be empty"
         case descriptionTooLong = "Description must be 200 characters or fewer"
+        case targetInvalid      = "Target must be between 1 and 99"
+        case durationInvalid    = "Duration must be between 1 and 365 days"
     }
 
     static func validateTitle(_ title: String) -> ValidationError? {
@@ -113,6 +115,14 @@ extension Goal {
         if trimmed.isEmpty                      { return .descriptionEmpty }
         if trimmed.count > descriptionMaxLength { return .descriptionTooLong }
         return nil
+    }
+
+    static func validateTarget(_ targetCount: Int) -> ValidationError? {
+        (1...99).contains(targetCount) ? nil : .targetInvalid
+    }
+
+    static func validateDuration(_ durationDays: Int) -> ValidationError? {
+        (1...365).contains(durationDays) ? nil : .durationInvalid
     }
 
     var scheduleText: String {

@@ -3,6 +3,7 @@ import SwiftUI
 struct ProofCardView: View {
     @EnvironmentObject var usersViewModel: UsersViewModel
     @EnvironmentObject var feedViewModel: FeedViewModel
+    @EnvironmentObject var groupsViewModel: GroupsViewModel
     @State private var isLiked: Bool
     @State private var showComments = false
     @State private var newComment = ""
@@ -82,7 +83,7 @@ struct ProofCardView: View {
             }
 
             // ACTION BUTTONS (Approve/Snitch)
-            if post.status(votersCount: SampleData.votersCount) == .pending {
+            if post.status(votersCount: groupsViewModel.votersCount(for: post)) == .pending {
                 HStack(spacing: 10) {
                     Text("Approve")
                         .font(.caption)
@@ -169,7 +170,7 @@ struct ProofCardView: View {
     }
 
     private var currentStatus: ProofStatus {
-        post.status(votersCount: SampleData.votersCount)
+        post.status(votersCount: groupsViewModel.votersCount(for: post))
     }
 
     private var backgroundColor: Color {

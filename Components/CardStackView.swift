@@ -16,7 +16,7 @@ struct CardStackView: View {
                 return post.groupId == activeId
             }
             .filter { $0.userId != SampleData.profile.id }
-            .filter { $0.status(votersCount: SampleData.votersCount) == .pending }
+            .filter { $0.status(votersCount: groupsViewModel.votersCount(for: $0)) == .pending }
             .filter { post in
                 !post.votes.contains { $0.voterId == SampleData.profile.id }
             }
@@ -128,7 +128,7 @@ struct CardStackView: View {
             dragOffset = CGSize(width: 700, height: 0)
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-            viewModel.castVote(.approve, by: SampleData.profile.id, on: post.id, users: usersViewModel)
+            viewModel.castVote(.approve, by: SampleData.profile.id, on: post.id, users: usersViewModel, groups: groupsViewModel)
             dragOffset = .zero
         }
     }

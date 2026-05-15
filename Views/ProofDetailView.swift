@@ -3,6 +3,7 @@ import SwiftUI
 struct ProofDetailView: View {
     @EnvironmentObject var feedViewModel: FeedViewModel
     @EnvironmentObject var usersViewModel: UsersViewModel
+    @EnvironmentObject var groupsViewModel: GroupsViewModel
 
     let post: ProofPost
 
@@ -88,7 +89,7 @@ struct ProofDetailView: View {
 
             Spacer()
 
-            Text(post.status(votersCount: SampleData.votersCount).displayName)
+            Text(post.status(votersCount: groupsViewModel.votersCount(for: post)).displayName)
                 .font(.subheadline)
                 .fontWeight(.semibold)
                 .foregroundStyle(AppColours.orange)
@@ -202,7 +203,7 @@ struct ProofDetailView: View {
     private var actionSection: some View {
         HStack(spacing: 12) {
             Button {
-                feedViewModel.castVote(.approve, by: SampleData.profile.id, on: post.id, users: usersViewModel)
+                feedViewModel.castVote(.approve, by: SampleData.profile.id, on: post.id, users: usersViewModel, groups: groupsViewModel)
             } label: {
                 Text("Approve")
                     .font(.headline)

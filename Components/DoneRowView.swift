@@ -2,6 +2,7 @@ import SwiftUI
 
 struct DoneRowView: View {
     @EnvironmentObject var usersViewModel: UsersViewModel
+    @EnvironmentObject var groupsViewModel: GroupsViewModel
     let post: ProofPost
 
     private var poster: UserProfile? {
@@ -9,7 +10,7 @@ struct DoneRowView: View {
     }
 
     private var status: ProofStatus {
-        post.status(votersCount: SampleData.votersCount)
+        post.status(votersCount: groupsViewModel.votersCount(for: post))
     }
 
     private var voteSplit: String {
