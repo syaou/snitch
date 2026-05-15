@@ -34,3 +34,19 @@ struct ProofPost: Identifiable, Codable, Hashable {
         return "just now"
     }
 }
+
+extension ProofPost {
+    // matches the Goal validation pattern
+    static let notesMaxLength = 280
+
+    enum ValidationError: String, Error {
+        case notesTooLong = "Notes must be 280 characters or fewer"
+    }
+
+    // notes are optional so empty is fine, only the length is checked
+    static func validateNotes(_ notes: String) -> ValidationError? {
+        let trimmed = notes.trimmingCharacters(in: .whitespacesAndNewlines)
+        if trimmed.count > notesMaxLength { return .notesTooLong }
+        return nil
+    }
+}
