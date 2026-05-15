@@ -23,7 +23,8 @@ final class FeedViewModel: ObservableObject {
 
     @Published private(set) var posts: [ProofPost] {
         didSet {
-            Persistence.save(posts, forKey: PersistenceKeys.posts)
+            // silent fallback if save fails, posts stay in memory until next save
+            try? Persistence.save(posts, forKey: PersistenceKeys.posts)
         }
     }
 

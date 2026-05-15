@@ -5,7 +5,8 @@ import Combine
 final class GoalsViewModel: ObservableObject {
     @Published private(set) var goals: [Goal] {
         didSet {
-            Persistence.save(goals, forKey: PersistenceKeys.goals)
+            // silent fallback if save fails, goals stay in memory until next save
+            try? Persistence.save(goals, forKey: PersistenceKeys.goals)
         }
     }
 

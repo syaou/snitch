@@ -5,7 +5,8 @@ import Combine
 final class UsersViewModel: ObservableObject {
     @Published private(set) var users: [UserProfile] {
         didSet {
-            Persistence.save(users, forKey: PersistenceKeys.users)
+            // silent fallback if save fails, users stay in memory until next save
+            try? Persistence.save(users, forKey: PersistenceKeys.users)
         }
     }
 

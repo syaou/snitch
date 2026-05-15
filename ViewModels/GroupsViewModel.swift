@@ -11,13 +11,15 @@ final class GroupsViewModel: ObservableObject {
 
     @Published private(set) var groups: [SnitchGroup] {
         didSet {
-            Persistence.save(groups, forKey: PersistenceKeys.groups)
+            // silent fallback if save fails, groups stay in memory until next save
+            try? Persistence.save(groups, forKey: PersistenceKeys.groups)
         }
     }
 
     @Published private(set) var activeGroupId: UUID? {
         didSet {
-            Persistence.save(activeGroupId, forKey: PersistenceKeys.activeGroupId)
+            // silent fallback if save fails, the active group resets next launch
+            try? Persistence.save(activeGroupId, forKey: PersistenceKeys.activeGroupId)
         }
     }
 
